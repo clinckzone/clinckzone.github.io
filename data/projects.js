@@ -5,7 +5,7 @@ var PROJECTS = [
 		title: '🃏 Coodle',
 		keywords: ['TUI', 'HCI', 'Research', 'Education'],
 		description:
-			'An accessible, tangible programming system to help children learn and practice programming in an intuitive and engaging manner.',
+			'An accessible, tangible programming system to help children learn and practice programming. Selected for publication as poster IndiaHCI 2021',
 	},
 	{
 		link: '/projects/projects-two-shapes',
@@ -13,7 +13,7 @@ var PROJECTS = [
 		title: '🕹️ Two Shapes',
 		keywords: ['Research', 'Games', 'HCI'],
 		description:
-			'A game designed to teach kids skills of collaboration and empathy. It was selected for publication at the Extended Abstracts of CHI PLAY 2020.',
+			'A game designed to teach kids skills of collaboration and empathy. Selected for publication at the Extended Abstracts of CHI PLAY 2020.',
 	},
 	{
 		link: '/projects/projects-smart-ac',
