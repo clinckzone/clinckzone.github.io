@@ -16,6 +16,14 @@ var PROJECTS = [
 			'A game designed to teach kids skills of collaboration and empathy. Selected for publication at the Extended Abstracts of CHI PLAY 2020.',
 	},
 	{
+		link: '/projects/projects-navigation-in-ve',
+		source: 'projects-navigation-in-ve-cover.png',
+		title: '⛔ Navigation in VE',
+		keywords: ['Research', 'Psychology'],
+		description:
+			'This research uses a virtual environment (VE) to answer whether route description and map with live updates helps in navigation.',
+	},
+	{
 		link: '/projects/projects-smart-ac',
 		source: 'projects-smart-ac-cover.png',
 		title: '🎛️ Smart AC Controller',
