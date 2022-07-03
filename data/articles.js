@@ -33,6 +33,15 @@ var ARTICLES = [
 	// 	keywords: ["Mobile", "Design"],
 	// 	description: "Lost and Found was my first design project that I had worked on from start to finish. In this blog post I go about sharing my process regarding the same."
 	// },
+	{
+		link: '/blog/blog-product-designer-and-disruption',
+		source: '/blog-product-designer-and-disruption-cover.png',
+		title: '🧠 Product Designers can\'t disrupt',
+		keywords: ['Opinion', 'Design', 'Technology'],
+		description:
+			'Here is my personal take on why I think Digital Product Designer are limited by their skillset when trying to build new technology',
+		date: '12th April 2022',
+	},
 ];
 
 module.exports = ARTICLES;
