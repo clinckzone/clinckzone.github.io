@@ -38,4 +38,12 @@ router.get("/blog-razorpay-internship", function(req, res) {
 	});
 });
 
+router.get("/blog-product-designer-and-disruption", function(req, res) {
+	res.render("blog-product-designer-and-disruption", {
+		title: '🧠 Product Designers can\'t disrupt',
+		stylesheet: '../page.css'
+	});
+});
+
+
 module.exports = router;
