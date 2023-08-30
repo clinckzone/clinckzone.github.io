@@ -173,6 +173,20 @@ li a:hover {
 .page {
   width: 800px;
 }
+.page .experience-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.page .experience-title h4 {
+  margin-top: 8px;
+  margin-bottom: 0px;
+}
+.page .experience-title .date {
+  margin-bottom: 0px;
+  font-size: 14px;
+  font-style: italic;
+}
 .page h1 {
   text-align: center;
 }
