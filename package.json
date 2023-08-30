@@ -1,7 +1,7 @@
 {
   "name": "website",
   "version": "1.0.0",
-  "description": "This website serves as a research portfolio of Divyanshu Tiwari",
+  "description": "This website serves as a personal portfolio of Divyanshu Tiwari",
   "main": "server.js",
   "engines": {
     "node": "v8.10.0"

@@ -282,6 +282,10 @@ li a:hover {
   font-size: 16px;
   color: #585858;
 }
+.description-box .description p .bold {
+  font-weight: 500;
+  color: #424242;
+}
 .description-box .resume {
   display: flex;
   align-items: center;
