@@ -1,5 +1,13 @@
 var PROJECTS = [
 	{
+		link: '/projects/projects-chronicle',
+		source: 'projects-chronicle-cover.png',
+		title: '⭐ Chronicle Endeavors',
+		keywords: ['Frontend', 'Presentation', 'SWE'],
+		description:
+			'An overview of my contributions at Chronicle, a startup reshaping the landscape of presentation creation and delivery.',
+	},
+	{
 		link: '/projects/projects-coodle',
 		source: 'projects-coodle-cover.png',
 		title: '🃏 Coodle',
