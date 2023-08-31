@@ -24,6 +24,13 @@ router.get('/projects-coodle', function (req, res) {
 	});
 });
 
+router.get('/projects-chronicle', function (req, res) {
+	res.render('projects-chronicle', {
+		title: '⭐ Chronicle Endeavors',
+		stylesheet: '../page.css',
+	});
+});
+
 router.get('/projects-navigation-in-ve', function (req, res) {
 	res.render('projects-navigation-in-ve', {
 		title: '⛔ Navigation in VE',
