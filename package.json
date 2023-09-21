@@ -1,26 +1,27 @@
 {
-  "name": "website",
-  "version": "1.0.0",
-  "description": "This website serves as a personal portfolio of Divyanshu Tiwari",
-  "main": "server.js",
-  "engines": {
-    "node": "v8.10.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"node server.js\" \"gulp compile\" "
-  },
-  "author": "Divyanshu",
-  "license": "MIT",
-  "dependencies": {
-    "concurrently": "^4.1.1",
-    "express": "^4.17.1",
-    "path": "^0.12.7",
-    "pug": "^3.0.1",
-    "stylus": "^0.54.5"
-  },
-  "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-stylus": "^2.7.0"
-  }
+	"name": "website",
+	"version": "1.0.0",
+	"description": "This website serves as a personal portfolio of Divyanshu Tiwari",
+	"main": "server.js",
+	"engines": {
+		"node": "v8.10.0"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "concurrently \"nodemon server.js\" \"gulp compile\" "
+	},
+	"author": "Divyanshu",
+	"license": "MIT",
+	"dependencies": {
+		"concurrently": "^4.1.1",
+		"express": "^4.17.1",
+		"nodemon": "^3.0.1",
+		"path": "^0.12.7",
+		"pug": "^3.0.1",
+		"stylus": "^0.54.5"
+	},
+	"devDependencies": {
+		"gulp": "^4.0.2",
+		"gulp-stylus": "^2.7.0"
+	}
 }
