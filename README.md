@@ -1,4 +1,4 @@
-# portfolio
+# portfolio-website
 This is my personal website. Feel free to use it as a ready-made template for your own website if you want, just keep a backlink to my website as credit :P
 
 ## Setup
