@@ -1,47 +1,47 @@
 extends page.pug
 
 block content
-	.page
-		h1=title
-		hr.line
+  .page
+    h1=title
+    hr.line
 
-		h2 Overview   
-		p This study aims to see if a live updated bird's eye view or a written description of the same would aid navigation utilising spatial landmarks in a coloured or black/white environment.
+    h2 Overview   
+    p This study aims to see if a live updated bird's eye view or a written description of the same would aid navigation utilising spatial landmarks in a coloured or black/white environment.
 
-		p The virtual environment (VE) software was used to set up the experiment. Sixty-nine people between the ages of 18 and 35 volunteered for the study (49 men and 20 women). Instruction with Bird's eye view, Instruction without Bird's eye view, No Instruction with Bird's eye view, and No Instruction without Bird's eye view were the four experimental conditions in the study. After an initial tour of the virtual area, participants were given a test, separated into two halves, with a 5-minute pause to decrease the learning effects of the trail. Individuals were randomly assigned to four different coloured and black-and-white (B/W) trails. After an activity break, the participants completed the second portion of the experiment.
+    p The virtual environment (VE) software was used to set up the experiment. Sixty-nine people between the ages of 18 and 35 volunteered for the study (49 men and 20 women). Instruction with Bird's eye view, Instruction without Bird's eye view, No Instruction with Bird's eye view, and No Instruction without Bird's eye view were the four experimental conditions in the study. After an initial tour of the virtual area, participants were given a test, separated into two halves, with a 5-minute pause to decrease the learning effects of the trail. Individuals were randomly assigned to four different coloured and black-and-white (B/W) trails. After an activity break, the participants completed the second portion of the experiment.
 
-		p The impact of route instructions on landmark identification was proven in both colour and black-and-white environments in the study. The findings also show that a visually depicted route instruction, which is generally independent of context, can be used to reduce wayfinding.
-		
-		h2 My Role
-		p In this project, I was primarily responsible for developing the virtual environment on Unity. This was used to collect behavioural data of users by testing their performance on particular tasks. Below is a demonstration video of the software that was finally used in the experiment.
-		
-		ul.single
-			li.video(style="width: 70%")
-				iframe(width="560" height="315" src="https://www.youtube.com/embed/NfiAWlUCf5o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
-				span Demonstration video
+    p The impact of route instructions on landmark identification was proven in both colour and black-and-white environments in the study. The findings also show that a visually depicted route instruction, which is generally independent of context, can be used to reduce wayfinding.
+    
+    h2 My Role
+    p In this project, I was primarily responsible for developing the virtual environment on Unity. This was used to collect behavioural data of users by testing their performance on particular tasks. Below is a demonstration video of the software that was finally used in the experiment.
+    
+    ul.single
+      li.video(style="width: 70%")
+        iframe(width="560" height="315" src="https://www.youtube.com/embed/NfiAWlUCf5o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
+        span Demonstration video
 
-		p The software collected various kinds of behavioural data of the participant for each completed trail in an excel sheet.
-		ul.single
-			li.image(style="width: 70%")
-				img(src="../projects-navigation-in-ve-01.png", alt="Excel Sheet")
-				span Average statistics of the participant for each trail.
+    p The software collected various kinds of behavioural data of the participant for each completed trail in an excel sheet.
+    ul.single
+      li.image(style="width: 70%")
+        img(src="../projects-navigation-in-ve-01.png", alt="Excel Sheet")
+        span Average statistics of the participant for each trail.
 
-		ul.single
-			li.image(style="width: 100%")
-				img(src="../projects-navigation-in-ve-02.png", alt="Excel Sheet")
-				span Participant responses and statistics for each trail.
-		
-		ul.double
-			li.image(style="width: 27%")
-				img(src="../projects-navigation-in-ve-03.png", alt="Excel Sheet")
-				span x and y positions logged-in for each trail .
+    ul.single
+      li.image(style="width: 100%")
+        img(src="../projects-navigation-in-ve-02.png", alt="Excel Sheet")
+        span Participant responses and statistics for each trail.
+    
+    ul.double
+      li.image(style="width: 27%")
+        img(src="../projects-navigation-in-ve-03.png", alt="Excel Sheet")
+        span x and y positions logged-in for each trail .
 
-			li.image(style="width: 30%")
-				img(src="../projects-navigation-in-ve-04.png", alt="Excel Sheet")
-				span Sample path taken by the participant in one of the trails. 
-		
-		p I also developed visualizations for participant’s behavioural data thus collected to help my supervisor gain insights into their behaviour. These visualizations were created programmatically using Processing 3.
-		ul.single
-			li.image(style="width: 75")
-				img(src="../projects-navigation-in-ve-05.png", alt="Excel Sheet")
-				span Thinner lines indicates less frequency of route choice and thicker lines indicate higher frequency of choice.
+      li.image(style="width: 30%")
+        img(src="../projects-navigation-in-ve-04.png", alt="Excel Sheet")
+        span Sample path taken by the participant in one of the trails. 
+    
+    p I also developed visualizations for participant’s behavioural data thus collected to help my supervisor gain insights into their behaviour. These visualizations were created programmatically using Processing 3.
+    ul.single
+      li.image(style="width: 75")
+        img(src="../projects-navigation-in-ve-05.png", alt="Excel Sheet")
+        span Thinner lines indicates less frequency of route choice and thicker lines indicate higher frequency of choice.

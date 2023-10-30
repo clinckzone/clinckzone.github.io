@@ -1,47 +1,47 @@
 extends page.pug
 
 block content
-	.page
-		h1=title
-		hr.line
+  .page
+    h1=title
+    hr.line
 
-		h2 Motivation
-		p During my first-year summer vacations, I was once watching ITP winter show 2017 on youtube. ITP holds its winter and summer shows at the end of each semester where its students exhibit their semester-long projects to the public. One of the projects that I found very interesting was called 
-			a(href="https://itp.nyu.edu/shows/winter2017/into-the-darkness") Into Darkness
-			|  by Heng Tang.
+    h2 Motivation
+    p During my first-year summer vacations, I was once watching ITP winter show 2017 on youtube. ITP holds its winter and summer shows at the end of each semester where its students exhibit their semester-long projects to the public. One of the projects that I found very interesting was called 
+      a(href="https://itp.nyu.edu/shows/winter2017/into-the-darkness") Into Darkness
+      |  by Heng Tang.
 
-		ul.single
-			li.image(style="width: 80%")
-				img(src="../projects-flappy-rockets-01.png", alt="Into Darkness by Heng Tang")
-				span Into Darkness by Heng Tang
+    ul.single
+      li.image(style="width: 80%")
+        img(src="../projects-flappy-rockets-01.png", alt="Into Darkness by Heng Tang")
+        span Into Darkness by Heng Tang
 
-		p It's a game full of space elements and physical interactions. The best part of the game is that the player controls the onscreen spaceship with a miniature physical spacecraft. Behaviours exhibited in the game's virtual world accurately imitated the player's actions in the real world. Such an interface where the user interacts with the digital information through a physical environment is called a Tangible User Interface.
-		p The seamless connection between the real and the virtual world is what makes interacting with the game so intuitive. In my utter fascination with this intuitiveness, I decided to develop my own version of this game.
+    p It's a game full of space elements and physical interactions. The best part of the game is that the player controls the onscreen spaceship with a miniature physical spacecraft. Behaviours exhibited in the game's virtual world accurately imitated the player's actions in the real world. Such an interface where the user interacts with the digital information through a physical environment is called a Tangible User Interface.
+    p The seamless connection between the real and the virtual world is what makes interacting with the game so intuitive. In my utter fascination with this intuitiveness, I decided to develop my own version of this game.
 
-		h2 The Game
-		h3 Concept
-		p Flappy Rockets is a single-player game developed on 
-			a(href="https://processing.org/") Processing 3
-			| . To gain points, you are required to dodge incoming asteroids and protect your spaceship from getting damaged. The user interaction involves the use of a miniature physical spacecraft to be used as a controller.
+    h2 The Game
+    h3 Concept
+    p Flappy Rockets is a single-player game developed on 
+      a(href="https://processing.org/") Processing 3
+      | . To gain points, you are required to dodge incoming asteroids and protect your spaceship from getting damaged. The user interaction involves the use of a miniature physical spacecraft to be used as a controller.
 
-		h3 Implementation
-		p The game has been built using Processing 3. Further, I have used 
-			a(href="https://box2d.org/") Box2D
-			|  as the game's physics engine which is mainly responsible for handling all the collision-related tasks. In case you are interested in knowing more about the inner implementation of the game, you can have a look at its source code hosted on 
-			a(href="https://github.com/clinckzone/flappy-rockets") Github
-			| . Following is the circuit implementation for the hardware used in the game:
-			
-		ul.single
-			li.image(style="width: 80%")
-				img(src="../projects-flappy-rockets-02.png", alt="Circuit Implementation")
-				span Circuit Implementation
-		
-		h3 Demo
-		ul.single
-			li.video(style="width: 70%")
-				iframe(width="560" height="315" src="https://www.youtube.com/embed/7ZwPCXcItlo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
-				span Interaction Demo
-		ul.single
-			li.video(style="width: 70%")
-				iframe(width="560" height="315" src="https://www.youtube.com/embed/H9chWg-RbNc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
-				span Gameplay Demo
+    h3 Implementation
+    p The game has been built using Processing 3. Further, I have used 
+      a(href="https://box2d.org/") Box2D
+      |  as the game's physics engine which is mainly responsible for handling all the collision-related tasks. In case you are interested in knowing more about the inner implementation of the game, you can have a look at its source code hosted on 
+      a(href="https://github.com/clinckzone/flappy-rockets") Github
+      | . Following is the circuit implementation for the hardware used in the game:
+      
+    ul.single
+      li.image(style="width: 80%")
+        img(src="../projects-flappy-rockets-02.png", alt="Circuit Implementation")
+        span Circuit Implementation
+    
+    h3 Demo
+    ul.single
+      li.video(style="width: 70%")
+        iframe(width="560" height="315" src="https://www.youtube.com/embed/7ZwPCXcItlo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
+        span Interaction Demo
+    ul.single
+      li.video(style="width: 70%")
+        iframe(width="560" height="315" src="https://www.youtube.com/embed/H9chWg-RbNc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen)
+        span Gameplay Demo

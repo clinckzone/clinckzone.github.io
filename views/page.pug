@@ -2,11 +2,11 @@ extends default.pug
 
 //- Importing MathJax scripts for writing math euqations
 block scripts
-	script MathJax = {tex: {inlineMath: ['\\(', '\\)']}};
-	script(src="https://polyfill.io/v3/polyfill.min.js?features=es6")
-	script(type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
+  script MathJax = {tex: {inlineMath: ['\\(', '\\)']}};
+  script(src="https://polyfill.io/v3/polyfill.min.js?features=es6")
+  script(type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
 
 block comments
-	.commentbox
-	script(src="https://unpkg.com/commentbox.io/dist/commentBox.min.js")
-	script commentBox('5677123549265920-proj')
+  .commentbox
+  script(src="https://unpkg.com/commentbox.io/dist/commentBox.min.js")
+  script commentBox('5677123549265920-proj')
