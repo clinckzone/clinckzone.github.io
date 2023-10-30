@@ -1,35 +1,35 @@
 extends page.pug
 
 block content
-	.page
-		h1=title
-		hr.line
+  .page
+    h1=title
+    hr.line
 
-		h2 Overview
-		p During my 2nd-year winter vacations, I worked as a student assistant to Prof. E Rajasekar at NetZed Lab. It is a Net-zero energy design lab in the Department of Architecture and Planning at IIT Roorkee.
-		p Here, I was given the task of developing a prototype of an automated AC controller that would maintain the AC at a temperature optimised for human comfort and energy efficiency.
+    h2 Overview
+    p During my 2nd-year winter vacations, I worked as a student assistant to Prof. E Rajasekar at NetZed Lab. It is a Net-zero energy design lab in the Department of Architecture and Planning at IIT Roorkee.
+    p Here, I was given the task of developing a prototype of an automated AC controller that would maintain the AC at a temperature optimised for human comfort and energy efficiency.
 
-		h2 How Does it Work?
-		h3 The Algorithm
-		p The device first calculates the operative temperature for the AC. It does this by analysing the interior and exterior temperature of the room every minute as per the following equation:
-		p.equation \T_{opt} = 0.78*T_{out} + 23.25°C)
-		p This temperature is then optimised either for human comfort or for energy efficiency. We call this temperature as the control temperature. This temperature data is then sent to the AC as an IR signal.
+    h2 How Does it Work?
+    h3 The Algorithm
+    p The device first calculates the operative temperature for the AC. It does this by analysing the interior and exterior temperature of the room every minute as per the following equation:
+    p.equation \T_{opt} = 0.78*T_{out} + 23.25°C)
+    p This temperature is then optimised either for human comfort or for energy efficiency. We call this temperature as the control temperature. This temperature data is then sent to the AC as an IR signal.
 
-		ul.double
-			li.image
-				img(src="../projects-smart-ac-01.png", alt="Physical prototype, top-view")
-				span Top view
-			li.image
-				img(src="../projects-smart-ac-02.png", alt="Physical prototyp, side-view")
-				span Side View
+    ul.double
+      li.image
+        img(src="../projects-smart-ac-01.png", alt="Physical prototype, top-view")
+        span Top view
+      li.image
+        img(src="../projects-smart-ac-02.png", alt="Physical prototyp, side-view")
+        span Side View
 
-		h3 Project Setup
-		ul
-			li RasberryPi receives indoor and outdoor temperature + humidity information from Arduino, using the DHT sensors that are directly connected to it.
-			li It then calculates the Control temperature every minute sends it back to Arduino, which manipulates the AC temperature using an IR blaster directly connected to it.
-			li Simultaneously, a multi-touch screen displays all the related information about the current state of the AC and the environment it is in.
-		
-		ul.single
-			li.image(style="width: 80%")
-				img(src="../projects-smart-ac-03.png", alt="Circuit Implementation")
-				span RasberryPi, Arduino, DHT sensors, IR Blaster, Multi-touch Screen
+    h3 Project Setup
+    ul
+      li RasberryPi receives indoor and outdoor temperature + humidity information from Arduino, using the DHT sensors that are directly connected to it.
+      li It then calculates the Control temperature every minute sends it back to Arduino, which manipulates the AC temperature using an IR blaster directly connected to it.
+      li Simultaneously, a multi-touch screen displays all the related information about the current state of the AC and the environment it is in.
+    
+    ul.single
+      li.image(style="width: 80%")
+        img(src="../projects-smart-ac-03.png", alt="Circuit Implementation")
+        span RasberryPi, Arduino, DHT sensors, IR Blaster, Multi-touch Screen
