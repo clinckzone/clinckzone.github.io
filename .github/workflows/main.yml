@@ -30,6 +30,9 @@ jobs:
           # Define the BASE_URL
           BASE_URL="docs"
 
+          # Remove all the contents from the directory
+          rm -rf ./$BASE_URL
+
           # Define the INDEX_URL
           INDEX_URL="http://localhost:8000"
 
@@ -57,7 +60,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add ./docs
-          git commit -m "Add crawled pages to /docs folder for GitHub Pages"
+          git commit -m "Update content for GitHub Pages"
           git push origin HEAD:master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
