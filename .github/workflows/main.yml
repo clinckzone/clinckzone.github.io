@@ -1,0 +1,63 @@
+name: Web Crawler Workflow
+
+# Trigger the workflow on push or pull request events
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  web-crawler:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16" # Use the version that your project requires
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Run the web crawler script
+        run: |
+          # Define the BASE_URL
+          BASE_URL="docs"
+
+          # Define the INDEX_URL
+          INDEX_URL="http://localhost:8000"
+
+          # Start the node server in the background
+          npm start &
+
+          # Wait a few seconds for the server to be up
+          sleep 5
+
+          # Crawl the website and save files
+          wget --mirror --convert-links --adjust-extension --page-requisites --no-parent "$INDEX_URL" -P ./$BASE_URL
+
+          # Extract the host and port from the INDEX_URL
+          HOSTNAME_AND_PORT="localhost:8000"
+
+          # Move files up one level and remove the directory
+          if [ -d "./$BASE_URL/$HOSTNAME_AND_PORT" ]; then
+              echo "Moving files from ./$BASE_URL/$HOSTNAME_AND_PORT to ./$BASE_URL"
+              mv ./$BASE_URL/$HOSTNAME_AND_PORT/* ./$BASE_URL/
+              rmdir ./$BASE_URL/$HOSTNAME_AND_PORT
+          fi
+
+      - name: Deploy to GitHub Pages
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./docs
+          git commit -m "Add crawled pages to /docs folder for GitHub Pages"
+          git push origin HEAD:master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
