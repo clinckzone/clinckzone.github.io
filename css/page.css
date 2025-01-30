@@ -268,3 +268,36 @@ li a:hover {
     margin-top: 20px;
   }
 }
+
+/* Monospaced font for code */
+code,
+pre {
+  font-family: "Fira Code", "Courier New", Courier, monospace;
+}
+code {
+  background-color: #e9f0ff;
+  color: #5183f5;
+  padding: 0.05em 0.2em;
+  border-radius: 3px;
+  font-size: 0.95em;
+  white-space: normal;
+}
+pre {
+  background-color: #f8f8f8;
+  color: #191919;
+  padding: 1em;
+  border-radius: 8px;
+  overflow: auto;
+  font-size: 0.5em;
+  line-height: 1.2;
+  white-space: pre-wrap;
+}
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  white-space: inherit;
+  tab-size: 2;
+  font-size: 0.5em;
+}
