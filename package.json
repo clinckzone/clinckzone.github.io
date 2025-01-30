@@ -1,27 +1,16 @@
 {
-  "name": "website",
+  "name": "personal-website",
   "version": "1.0.0",
-  "description": "This website serves as a personal portfolio of Divyanshu Tiwari",
-  "main": "server.js",
-  "engines": {
-    "node": "v8.10.0"
-  },
+  "description": "Divyanshu's personal static website",
+  "main": "convertMarkdownToHtml.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"nodemon server.js\" \"gulp compile\" "
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Divyanshu",
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
-    "concurrently": "^4.1.1",
-    "express": "^4.17.1",
-    "nodemon": "^3.0.1",
-    "path": "^0.12.7",
-    "pug": "^3.0.1",
-    "stylus": "^0.54.5"
-  },
-  "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-stylus": "^2.7.0"
+    "jsdom": "^26.0.0",
+    "marked": "^15.0.6",
+    "turndown": "^7.2.0"
   }
 }

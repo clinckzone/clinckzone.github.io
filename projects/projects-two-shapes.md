@@ -1,0 +1,58 @@
+🕹️ Two Shapes
+==============
+
+* * *
+
+**Original Paper**  
+[Fostering Collaboration and Empathy Through Games](https://doi.org/10.1145/3383668.3419929)
+
+![](../images/projects-two-shapes-01.png)
+
+Abstract
+--------
+
+Kids who can easily collaborate with their peers are often up to a great start in their adult life. For effective collaboration, the collaborating individuals must be empathetic enough to be able to understand each other well and resolve conflicts as and when they arise. However, such abstract concepts are difficult to teach in classrooms since they do not always adhere to the boundaries that theoretical definitions place on them. A much better way to explain such concepts lies in practicing them, and one of the key ways in which these skills can be practiced and taught in classrooms is through games. Games serve as an excellent learning tool since they make learning fun and help students pay attention and stay focused on the subject. For this reason, we have designed and developed a novel dual-player game called "Two Shapes" that makes use of its in-game mechanics as a tool to teach children the essential skills of collaboration and empathy. The game has been designed in such a way that the two players are required to recognize each other's strengths and abilities to overcome obstacles in their paths by leveraging them.
+
+[Gameplay Demo](https://www.youtube.com/embed/wRmNR0uNkqA)
+
+Introduction
+------------
+
+Collaboration is said to occur when two or more individuals work together to accomplish a single goal. At the same time, empathy is the ability of an individual to understand the emotions of other individuals. People who are equipped with these two skills find it easier to navigate through their professional and personal lives. As the world becomes faster and sophisticated, these skills will become more critical than ever. Hence, teaching these essential life skills should begin from an individuals' childhood.
+
+These abstract concepts cannot be taught within the traditional boundaries of instructional education since it lays a lot of emphasis on theoretical aspects of learning while these skills are something that can only be learnt by practising. However, games can provide children with an excellent opportunity for learning and practising them, since they act like a sandbox where children can try, experiment and fail without any repercussions. Given the fact that a large number of school-aged children are playing games, these games can also act as a medium for learning outside the classroom.
+
+Most attempts at incorporating games into the learning process have been around developing gamification systems. Many such systems use points, badges and leaderboards for encouraging engagement. For example, Khan Academy makes use of badges as a gamification element in their online learning program. Gamification systems are different from actual games since elements like points and badges simply mark an individuals' progress (as opposed to games that challenge a player's skill and ability) and hence fail to provide inherent value. Hanus et al. included gamified elements like badges and leaderboards into the curriculum of a course. They found that it led to lower satisfaction, motivation and empowerment over time than those in the non-gamified class\[[2](projects-two-shapes.html#2)\]. Anderson et al. found that badges work effectively when people are close to earning them, but then the activity of the user returns to normal soon after the badge is earned\[[1](projects-two-shapes.html#1)\]. However, when a complete game is developed with important game design principles like challenge and fantasy incorporated in it, it becomes much more engaging and motivating than their gamified counterparts\[[3](projects-two-shapes.html#3)\].
+
+Therefore we hypothesise that abstract skills like collaboration and empathy can effectively be taught and practised through games instead of gamification techniques. For this reason, the game that we have designed and developed has been based on the same concept.
+
+Concept
+-------
+
+### Overview
+
+In this section, we describe our game. It is a dual-player game designed and developed on Unity. The primary intent with the design of this game has been around teaching valuable skills of collaboration and empathy to children through collaborative puzzle-solving, where each player has to recognise and leverage the ability of the other player to solve puzzles.
+
+### Mechanics
+
+As the name of the game itself suggests, the two players play as two different shapes (Square and Circle) who have different strengths and weaknesses. Circle is lightweight and fast. It can jump high and climb walls. On the other hand, Square is bulky and slow with the ability to push heavy objects. The game engages its players in such a way that in order to solve a puzzle, they are required to acknowledge and leverage each other's abilities.
+
+![Circle is lightweight and fast](../images/projects-two-shapes-02.png)
+![Square is bulky and slow](../images/projects-two-shapes-03.png)
+
+Players can collaborate in several ways within the game. Square being bulky, can easily move large obstacles out of its way, while Circle being fast, can help Square to jump over obstacles that it usually can't on its own. Within the different levels of the game, there occur various instances where they need these abilities of each other to overcome obstacles. For example, in the 3rd level of the game, an optimum strategy is to first let the Square reach on top of the green platform with the help of the Circle, after which it (Square) can topple the platform with its weight.
+
+![Circle helps the square reach the top of the platform](../images/projects-two-shapes-04.png)
+![Square can now topple the platform with its weight](../images/projects-two-shapes-05.png)
+
+Future Scope
+------------
+
+The current version of the game is only a conceptual demo that aims to illustrate how the mechanics of a game can encourage collaboration among individuals. There are a variety of ways in which the existing mechanics of the game can be extended to include various other creative ways of collaboration. One of the easiest ways to do that is by incorporating player abilities that are complementary to each other and by designing levels that make use of these different abilities in various combinations. This way, the two will be helping out each other for clearing levels. For example, shooting enemies can be introduced within the game. On the other hand, Circle can be given the ability to shoot while Square can have the ability to defend itself and others from shooting projectiles. Being complementary skills, the two will have to cooperate to defeat and destroy their enemies.
+
+References
+----------
+
+1.  [Steering User Behavior with Badges](https://doi.org/10.1145/2488388.2488398)
+2.  [Assessing the Effects of Gamification in the Classroom](https://www.sciencedirect.com/science/article/abs/pii/S0360131514002000)
+3.  [Heuristics for Designing Enjoyable User Interfaces](https://doi.org/10.1145/800049.801756)
