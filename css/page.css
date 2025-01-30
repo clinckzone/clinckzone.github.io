@@ -288,7 +288,7 @@ pre {
   padding: 1em;
   border-radius: 8px;
   overflow: auto;
-  font-size: 0.5em;
+  font-size: 0.9em;
   line-height: 1.2;
   white-space: pre-wrap;
 }
@@ -299,5 +299,5 @@ pre code {
   border-radius: 0;
   white-space: inherit;
   tab-size: 2;
-  font-size: 0.5em;
+  font-size: 0.9em;
 }
