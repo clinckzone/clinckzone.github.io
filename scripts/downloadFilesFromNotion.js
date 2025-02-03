@@ -6,9 +6,9 @@ const path = require("path");
 const { JSDOM } = require("jsdom");
 const { Client } = require("@notionhq/client");
 const { NotionToMarkdown } = require("notion-to-md");
+const { downloadImage } = require("./utils/downloadImagesToLocal.js");
 const { formatIsoDateToDayMonthYear } = require("./utils/formatIsoDate.js");
 const { exportMarkdownToHtml } = require("./utils/convertMarkdownToHtml.js");
-const { downloadImage } = require("./utils/downloadImagesToLocal.js");
 
 // Initialize Notion client
 const notion = new Client({
@@ -67,7 +67,7 @@ function listPageOnWebsite(pageCategory, filename, metadata) {
   // Set the inner HTML of our new anchor
   newListItem.innerHTML = `
       <li class="card">
-        <img src="${filename}-cover.png" />
+        <img src="images/${filename}-cover.png" />
         <h3>${metadata.title}</h3>
         ${metadata.tags.map((tag) => `<span>${tag}</span>`).join("")}
         <p>${metadata.subtitle}</p>
