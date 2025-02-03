@@ -8,6 +8,7 @@ const { Client } = require("@notionhq/client");
 const { NotionToMarkdown } = require("notion-to-md");
 const { formatIsoDateToDayMonthYear } = require("./utils/formatIsoDate.js");
 const { exportMarkdownToHtml } = require("./utils/convertMarkdownToHtml.js");
+const { downloadImage } = require("./utils/downloadImagesToLocal.js");
 
 // Initialize Notion client
 const notion = new Client({
@@ -60,10 +61,13 @@ function listPageOnWebsite(pageCategory, filename, metadata) {
   const newListItem = document.createElement("a");
   newListItem.setAttribute("href", `${pageCategory}/${filename}.html`);
 
+  // Download cover file to local
+  downloadImage(metadata.coverUrl, `${filename}-cover.png`);
+
   // Set the inner HTML of our new anchor
   newListItem.innerHTML = `
       <li class="card">
-        <img src=${metadata.coverUrl} />
+        <img src="${filename}-cover.png" />
         <h3>${metadata.title}</h3>
         ${metadata.tags.map((tag) => `<span>${tag}</span>`).join("")}
         <p>${metadata.subtitle}</p>
@@ -82,19 +86,48 @@ function listPageOnWebsite(pageCategory, filename, metadata) {
   console.log(`Added ${pageCategory} listing to ${pageCategory}.html`);
 }
 
+async function updateImageUrlsInMarkdown(mdString, filename) {
+  // Find all image urls
+  const imageRegex = /!\[.*?\]\((.*?)\)/g;
+  const matches = [...mdString.matchAll(imageRegex)];
+
+  // Map original URLs to new local filenames
+  const imageUrls = matches.map((match, index) => {
+    const originalUrl = match[1]; // Captured URL
+    const newFilename = `${filename}-${index + 1}.png`; // Ensure PNG format
+    return { originalUrl, newFilename };
+  });
+
+  // Download images asynchronously
+  console.log(`Downloading ${imageUrls.length} images in the page`);
+  await Promise.all(
+    imageUrls.map(({ originalUrl, newFilename }) => downloadImage(originalUrl, newFilename))
+  );
+
+  // Replace Markdown content with new local paths
+  let updatedMdString = mdString;
+  imageUrls.forEach(({ originalUrl, newFilename }) => {
+    const localPath = `../images/${newFilename}`; // Construct local reference
+    updatedMdString = updatedMdString.replace(originalUrl, localPath);
+  });
+
+  return updatedMdString;
+}
+
 // Function to create a new page in the website
 async function addPageToWebsite(page) {
   try {
-    const mdBlocks = await n2m.pageToMarkdown(page.id);
-    const mdString = n2m.toMarkdownString(mdBlocks).parent;
-    const pageCategory = page.properties.Category.select.name.toLowerCase();
-
     // Get the page title
-    const titleProperty = page.properties.Name;
     let title = "Untitled";
+    const titleProperty = page.properties.Name;
     if (titleProperty && titleProperty.type === "title" && titleProperty.title.length > 0) {
       title = titleProperty.title.map((part) => part.plain_text).join("");
     }
+
+    console.log(`Exporting page: ${title}`);
+    const mdBlocks = await n2m.pageToMarkdown(page.id);
+    const mdString = n2m.toMarkdownString(mdBlocks).parent;
+    const pageCategory = page.properties.Category.select.name.toLowerCase();
 
     // Sanitize the title for filename
     const sanitizedFilename = title
@@ -102,6 +135,9 @@ async function addPageToWebsite(page) {
       .replace(/ /g, "-")
       .toLowerCase();
     const completefileName = `${pageCategory}-${sanitizedFilename}`;
+
+    // Downloads and replaces all the remote image urls with local ones
+    const updatedMdString = await updateImageUrlsInMarkdown(mdString, completefileName);
 
     // Define the output path
     const outputDir = path.resolve(__dirname, `../${pageCategory}`);
@@ -113,7 +149,7 @@ async function addPageToWebsite(page) {
     const mdFilePath = path.resolve(outputDir, `${completefileName}.md`);
 
     // Write the Markdown string to a file
-    fs.writeFileSync(mdFilePath, mdString, "utf-8");
+    fs.writeFileSync(mdFilePath, updatedMdString, "utf-8");
     console.log(`✅ Exported: ${completefileName}.md`);
 
     // Write the markdown to a HTML file

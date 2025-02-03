@@ -94,7 +94,7 @@ function convertMarkdownToStyledHtml(markdownPath, templatePath) {
 
 // Write the markdown file to a html file
 function exportMarkdownToHtml(markdownFilePath) {
-  const templateFilePath = "../template.html";
+  const templateFilePath = "../../template.html";
   const htmlFilePath = markdownFilePath.replace(/\.md$/, ".html");
   const resolvedTemplateFilePath = path.resolve(__dirname, templateFilePath);
 
