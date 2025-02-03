@@ -63,8 +63,21 @@ const convertHtmlToMarkdown = (htmlFilePath) => {
     // Return the generated markdown
     return markdownContent;
   } catch (error) {
-    throw error;
+    console.error("❌ Error while converting html to markdown", error.message);
   }
 };
 
-module.exports = { convertHtmlToMarkdown };
+// Write the markdown file to a html file
+function exportHtmlToMarkdown(htmlFilePath) {
+  const mdFilePath = htmlFilePath.replace(/\.md$/, ".md");
+
+  try {
+    const mdString = convertHtmlToMarkdown(htmlFilePath);
+    fs.writeFileSync(mdFilePath, mdString, "utf-8");
+    console.log(`✅ Converted: ${path.basename(htmlFilePath)} -> ${path.basename(mdFilePath)}`);
+  } catch (error) {
+    console.error(`❌ Error while generating markdown file ${mdFilePath}:`, error.message);
+  }
+}
+
+module.exports = { convertHtmlToMarkdown, exportHtmlToMarkdown };

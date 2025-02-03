@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const { marked } = require("marked");
 
 // Helper functions
@@ -10,8 +11,11 @@ function cleanHref(href) {
   return encodeURI(href).replace(/%25/g, "%");
 }
 
-let currTitle; // Title of the current file being processed
-const renderer = new marked.Renderer(); // Custom renderer to add CSS classes and IDs
+// Title of the current file being processed
+let currTitle;
+
+// Custom renderer to add CSS classes and IDs
+const renderer = new marked.Renderer();
 
 renderer.heading = ({ text, depth }) => {
   if (depth === 1) currTitle = text;
@@ -84,8 +88,25 @@ function convertMarkdownToStyledHtml(markdownPath, templatePath) {
     // Return the generated html
     return finalHtml;
   } catch (error) {
-    console.error("Error generating styled HTML:", error.message);
+    console.error("❌ Error while converting markdown to html", error.message);
   }
 }
 
-module.exports = { convertMarkdownToStyledHtml };
+// Write the markdown file to a html file
+function exportMarkdownToHtml(markdownFilePath) {
+  const templateFilePath = "../template.html";
+  const htmlFilePath = markdownFilePath.replace(/\.md$/, ".html");
+  const resolvedTemplateFilePath = path.resolve(__dirname, templateFilePath);
+
+  try {
+    const htmlString = convertMarkdownToStyledHtml(markdownFilePath, resolvedTemplateFilePath);
+    fs.writeFileSync(htmlFilePath, htmlString, "utf-8");
+    console.log(
+      `✅ Converted: ${path.basename(markdownFilePath)} -> ${path.basename(htmlFilePath)}`
+    );
+  } catch (error) {
+    console.error(`❌ Error while generating html file ${htmlFilePath}:`, error.message);
+  }
+}
+
+module.exports = { convertMarkdownToStyledHtml, exportMarkdownToHtml };

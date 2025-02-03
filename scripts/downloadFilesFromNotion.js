@@ -3,9 +3,11 @@ require("dotenv").config();
 
 const fs = require("fs");
 const path = require("path");
+const { JSDOM } = require("jsdom");
 const { Client } = require("@notionhq/client");
 const { NotionToMarkdown } = require("notion-to-md");
-const { convertMarkdownToStyledHtml } = require("./convertMarkdownToHtml.js");
+const { formatIsoDateToDayMonthYear } = require("./utils/formatIsoDate.js");
+const { exportMarkdownToHtml } = require("./utils/convertMarkdownToHtml.js");
 
 // Initialize Notion client
 const notion = new Client({
@@ -42,22 +44,46 @@ async function getPages(databaseId) {
   return pages;
 }
 
-// Write the markdown file to a html file
-function exportMarkdownToHtml(markdownFilePath) {
-  const templateFilePath = "../template.html";
-  const htmlFilePath = markdownFilePath.replace(/\.md$/, ".html");
-  const resolvedTemplateFilePath = path.resolve(__dirname, templateFilePath);
+function listPageOnWebsite(pageCategory, filename, metadata) {
+  // Read the existing HTML
+  const listingFilePath = path.resolve(__dirname, `../${pageCategory}.html`);
+  const listingFileHtml = fs.readFileSync(listingFilePath, "utf-8");
 
-  try {
-    const htmlString = convertMarkdownToStyledHtml(markdownFilePath, resolvedTemplateFilePath);
-    fs.writeFileSync(htmlFilePath, htmlString, "utf-8");
-  } catch (error) {
-    console.error(`Error while generating html file ${htmlFilePath}:`, error.message);
-  }
+  // Parse the HTML with JSDOM
+  const dom = new JSDOM(listingFileHtml);
+  const document = dom.window.document;
+
+  // Find the .project-list element
+  const projectList = document.querySelector(".project-list");
+
+  // Create a new anchor element
+  const newListItem = document.createElement("a");
+  newListItem.setAttribute("href", `${pageCategory}/${filename}.html`);
+
+  // Set the inner HTML of our new anchor
+  newListItem.innerHTML = `
+      <li class="card">
+        <img src=${metadata.coverUrl} />
+        <h3>${metadata.title}</h3>
+        ${metadata.tags.map((tag) => `<span>${tag}</span>`).join("")}
+        <p>${metadata.subtitle}</p>
+        <div class="date">${metadata.date}</div>
+      </li>
+  `;
+
+  // Append it to the existing .project-list
+  projectList.appendChild(newListItem);
+
+  // Serialize the updated DOM back to HTML
+  const updatedHTML = dom.serialize();
+
+  // Write the updated HTML to the original file
+  fs.writeFileSync(listingFilePath, updatedHTML, "utf-8");
+  console.log(`Added ${pageCategory} listing to ${pageCategory}.html`);
 }
 
-// Function to convert a Notion page to Markdown and save it
-async function exportPageToMarkdown(page) {
+// Function to create a new page in the website
+async function addPageToWebsite(page) {
   try {
     const mdBlocks = await n2m.pageToMarkdown(page.id);
     const mdString = n2m.toMarkdownString(mdBlocks).parent;
@@ -71,28 +97,42 @@ async function exportPageToMarkdown(page) {
     }
 
     // Sanitize the title for filename
-    const sanitizedTitle = title
+    const sanitizedFilename = title
       .replace(/[<>:,"/\\|?*]+/g, "")
-      .toLowerCase()
-      .replace(/ /g, "-");
-    const completefileName = `${pageCategory}-${sanitizedTitle}`;
+      .replace(/ /g, "-")
+      .toLowerCase();
+    const completefileName = `${pageCategory}-${sanitizedFilename}`;
 
     // Define the output path
-    const outputDir = path.join(__dirname, `../${pageCategory}`);
+    const outputDir = path.resolve(__dirname, `../${pageCategory}`);
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
     }
 
     // Complete file path
-    const mdFilePath = path.join(outputDir, `${completefileName}.md`);
+    const mdFilePath = path.resolve(outputDir, `${completefileName}.md`);
 
     // Write the Markdown string to a file
     fs.writeFileSync(mdFilePath, mdString, "utf-8");
-    console.log(`Exported: ${sanitizedTitle}.md`);
+    console.log(`✅ Exported: ${completefileName}.md`);
 
+    // Write the markdown to a HTML file
     exportMarkdownToHtml(mdFilePath);
+    console.log(`✅ Exported: ${completefileName}.html`);
+
+    // Page metadata
+    const metadata = {
+      coverUrl: page.cover.external.url,
+      title,
+      subtitle: "",
+      tags: page.properties.Tags.multi_select.map((tag) => tag.name),
+      date: formatIsoDateToDayMonthYear(page.properties.Created.created_time),
+    };
+
+    // Create a listing from the page metadata
+    listPageOnWebsite(pageCategory, completefileName, metadata);
   } catch (error) {
-    console.error(`Error exporting page ${page.id}:`, error);
+    console.error(`❌ Error exporting page ${page.id}:`, error);
   }
 }
 
@@ -111,10 +151,10 @@ async function main() {
 
   for (const page of pages) {
     isPageCompleted = page.properties.Status.select.name === "Complete";
-    if (isPageCompleted) await exportPageToMarkdown(page);
+    if (isPageCompleted) await addPageToWebsite(page);
   }
 
-  console.log("Export completed.");
+  console.log("✅ Export completed.");
 }
 
 // Execute the main function
