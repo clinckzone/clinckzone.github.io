@@ -9,11 +9,11 @@
   "author": "Divyanshu",
   "license": "ISC",
   "dependencies": {
-    "@notionhq/client": "^2.2.15",
-    "dotenv": "^16.4.7",
-    "jsdom": "^26.0.0",
-    "marked": "^15.0.6",
-    "notion-to-md": "^3.1.4",
-    "turndown": "^7.2.0"
+    "@notionhq/client": "2.2.15",
+    "dotenv": "16.4.7",
+    "jsdom": "26.0.0",
+    "marked": "15.0.6",
+    "notion-to-md": "3.1.4",
+    "turndown": "7.2.0"
   }
 }
