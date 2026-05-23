@@ -82,7 +82,10 @@ function convertMarkdownToStyledHtml(markdownPath, templatePath) {
 
     // Inject the converted HTML into the template
     const finalHtml = templateHtml
-      .replace('<div class="page"></div>', `<div class="page">${contentHtml}</div>`)
+      .replace(
+        '<div class="page"></div>',
+        `<div class="page">${contentHtml}</div>`,
+      )
       .replace("<title>Template</title>", `<title>${currTitle}</title>`);
 
     // Return the generated html
@@ -99,13 +102,19 @@ function exportMarkdownToHtml(markdownFilePath) {
   const resolvedTemplateFilePath = path.resolve(__dirname, templateFilePath);
 
   try {
-    const htmlString = convertMarkdownToStyledHtml(markdownFilePath, resolvedTemplateFilePath);
+    const htmlString = convertMarkdownToStyledHtml(
+      markdownFilePath,
+      resolvedTemplateFilePath,
+    );
     fs.writeFileSync(htmlFilePath, htmlString, "utf-8");
     console.log(
-      `✅ Converted: ${path.basename(markdownFilePath)} -> ${path.basename(htmlFilePath)}`
+      `✅ Converted: ${path.basename(markdownFilePath)} -> ${path.basename(htmlFilePath)}`,
     );
   } catch (error) {
-    console.error(`❌ Error while generating html file ${htmlFilePath}:`, error.message);
+    console.error(
+      `❌ Error while generating html file ${htmlFilePath}:`,
+      error.message,
+    );
   }
 }
 

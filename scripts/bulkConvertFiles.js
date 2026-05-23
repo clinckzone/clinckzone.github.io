@@ -39,7 +39,7 @@ function bulkConvertFiles(dirPath, targetFormat) {
 
   processDirectory(dirPath);
   console.log(
-    `✅ Bulk conversion completed: ${targetFormat.toUpperCase()} files saved in ${dirPath}`
+    `✅ Bulk conversion completed: ${targetFormat.toUpperCase()} files saved in ${dirPath}`,
   );
 }
 

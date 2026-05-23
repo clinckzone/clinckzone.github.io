@@ -75,9 +75,14 @@ function exportHtmlToMarkdown(htmlFilePath) {
   try {
     const mdString = convertHtmlToMarkdown(htmlFilePath);
     fs.writeFileSync(mdFilePath, mdString, "utf-8");
-    console.log(`✅ Converted: ${path.basename(htmlFilePath)} -> ${path.basename(mdFilePath)}`);
+    console.log(
+      `✅ Converted: ${path.basename(htmlFilePath)} -> ${path.basename(mdFilePath)}`,
+    );
   } catch (error) {
-    console.error(`❌ Error while generating markdown file ${mdFilePath}:`, error.message);
+    console.error(
+      `❌ Error while generating markdown file ${mdFilePath}:`,
+      error.message,
+    );
   }
 }
 

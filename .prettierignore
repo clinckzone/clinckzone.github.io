@@ -4,3 +4,8 @@ package-lock.json
 images
 files
 .husky
+*.md
+
+# Pre-existing renderer bug produces <ul> inside <p>; Prettier can't parse it.
+# Remove this entry once convertMarkdownToHtml.js's paragraph handler is fixed.
+projects/projects-destech-challenge.html

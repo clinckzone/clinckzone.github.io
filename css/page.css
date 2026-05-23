@@ -4,8 +4,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
-    "Helvetica Neue", sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu,
+    Cantarell, "Helvetica Neue", sans-serif;
   font-size: 16px;
   color: #696969;
   overflow-x: hidden;
@@ -13,7 +14,8 @@ body {
 h1,
 h2,
 h3 {
-  font-family: inter, Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji",
+  font-family:
+    inter, Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji",
     "Segoe UI Symbol";
 }
 .line {
