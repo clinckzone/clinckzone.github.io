@@ -1,5 +1,5 @@
 
-# 🌱 Implementing Debounce, Throttle and Curry in Javascript
+# 🌱 Implementing Debounce, Throttle and Curry in Javascript
 
 
 ---

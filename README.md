@@ -70,7 +70,7 @@ Categories `blog` and `projects` are the only ones with existing listing pages (
 3. Locally:
 
    ```bash
-   node scripts/downloadFilesFromNotion.js
+   npm run pull-and-build
    ```
 
 4. Review changes with `git status` / `git diff` — you should see new files in the target category folder, new images in `images/`, and an appended card on the listing HTML.
@@ -85,7 +85,7 @@ The skip-if-already-listed check uses the listing card as the source of truth. T
 1. Open the relevant listing page (`blog.html` or `projects.html`).
 2. Delete the `<a>...</a>` card for the post you want to re-publish.
 3. Optionally also delete the generated `.html`, `.md`, and `images/<category>-<slug>-*.png` files. Otherwise they'll be overwritten in place.
-4. Re-run `node scripts/downloadFilesFromNotion.js`.
+4. Re-run `npm run pull-and-build`.
 
 ## Scripts
 
@@ -96,7 +96,8 @@ All scripts live in `scripts/` and run from the repo root.
 The main publishing pipeline. Reads from the Notion database (filtered to `Status = Complete`), generates `.md` + `.html` per page, downloads embedded images, and appends listing cards.
 
 ```bash
-node scripts/downloadFilesFromNotion.js
+npm run pull-and-build
+# equivalent to: node scripts/downloadFilesFromNotion.js
 ```
 
 ### `scripts/bulkConvertFiles.js`
