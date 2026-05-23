@@ -216,8 +216,9 @@ async function main() {
   console.log(`Found ${pages.length} pages.`);
 
   for (const page of pages) {
-    isPageCompleted = page.properties.Status.select.name === "Complete";
-    if (isPageCompleted) await addPageToWebsite(page);
+    if (page.properties.Status?.select?.name === "Complete") {
+      await addPageToWebsite(page);
+    }
   }
 
   console.log("✅ Export completed.");

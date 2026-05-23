@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const { JSDOM } = require("jsdom");
 const TurndownService = require("turndown");
 
@@ -13,7 +14,7 @@ turndownService.addRule("imageHandler", {
       (node.classList.contains("double") || node.classList.contains("single"))
     );
   },
-  replacement: (content, node, options) => {
+  replacement: (content, node) => {
     let media = [];
 
     // Process each <li class="image">
@@ -69,7 +70,7 @@ const convertHtmlToMarkdown = (htmlFilePath) => {
 
 // Write the markdown file to a html file
 function exportHtmlToMarkdown(htmlFilePath) {
-  const mdFilePath = htmlFilePath.replace(/\.md$/, ".md");
+  const mdFilePath = htmlFilePath.replace(/\.html$/, ".md");
 
   try {
     const mdString = convertHtmlToMarkdown(htmlFilePath);

@@ -32,7 +32,7 @@ renderer.paragraph = ({ tokens }) => {
   return `<p>${renderer.parser.parseInline(tokens)}</p>\n`;
 };
 
-renderer.image = ({ href, title, text }) => {
+renderer.image = ({ href, text }) => {
   href = cleanHref(href);
   text = escapeQuotes(text);
   return `<ul class="single"><li class="image"><img src="${href}" alt="${text}" /><span>${text}</span></li></ul>`;
