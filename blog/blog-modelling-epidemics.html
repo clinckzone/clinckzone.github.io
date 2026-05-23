@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>😷 Modelling Epidemics</title>
     <link rel="stylesheet" href="../css/page.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://kit.fontawesome.com/57a1b63118.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/57a1b63118.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="../js/resizeImage.js"></script>
     <script src="../js/mathJaxConfig.js"></script>
     <script
@@ -30,8 +33,9 @@
       <hr class="line" />
       <h2>Introduction</h2>
       <p>
-        I naturally grew curious about understanding epidemics and answering several questions
-        related to them because of the kind of situation we are currently living in. Questions like,
+        I naturally grew curious about understanding epidemics and answering
+        several questions related to them because of the kind of situation we
+        are currently living in. Questions like,
       </p>
       <ul>
         <li>How does a pandemic start?</li>
@@ -40,89 +44,103 @@
         <li>How does it behave under such strategies?</li>
       </ul>
       <p>
-        I knew to be able to understand this, I will first have to understand how an epidemic is
-        modelled mathematically. I searched on the internet for articles and came across a few
-        useful ones that had explained simple mathematical models for the same.
+        I knew to be able to understand this, I will first have to understand
+        how an epidemic is modelled mathematically. I searched on the internet
+        for articles and came across a few useful ones that had explained simple
+        mathematical models for the same.
       </p>
       <p>
-        This post is mainly about explaining how epidemics are modelled. I would really appreciate
-        your feedback and ideas on the same and how this can be made more realistic.
+        This post is mainly about explaining how epidemics are modelled. I would
+        really appreciate your feedback and ideas on the same and how this can
+        be made more realistic.
       </p>
       <h2>Compartmental Models</h2>
       <p>
-        In epidemiology, compartment models are used to simplify the modelling of epidemics. These
-        models divide the entire population into compartments with everyone in the same compartment
-        sharing the same characteristics. They represent the various stages through which each
-        member of the community goes through in an outbreak. These models are especially useful in
-        predicting the spread of a disease and its prevalence in society.
+        In epidemiology, compartment models are used to simplify the modelling
+        of epidemics. These models divide the entire population into
+        compartments with everyone in the same compartment sharing the same
+        characteristics. They represent the various stages through which each
+        member of the community goes through in an outbreak. These models are
+        especially useful in predicting the spread of a disease and its
+        prevalence in society.
       </p>
       <p>
-        Diseases move in and out of a population in several ways. Some are like measles, once
-        contracted, they&#39;re never contracted again. Some are like influenza, getting infected
-        once doesn&#39;t confer long-lasting immunity. Hence, different compartment models are used
-        for modelling different diseases since they require different compartments. To begin with,
-        we&#39;ll start with a simple model to model a disease like measles.
+        Diseases move in and out of a population in several ways. Some are like
+        measles, once contracted, they&#39;re never contracted again. Some are
+        like influenza, getting infected once doesn&#39;t confer long-lasting
+        immunity. Hence, different compartment models are used for modelling
+        different diseases since they require different compartments. To begin
+        with, we&#39;ll start with a simple model to model a disease like
+        measles.
       </p>
       <h2>S-I-R Model</h2>
       <p>
-        Here, <strong>S</strong> stands for <strong>Susceptible</strong>, <strong>I</strong> stands
-        for <strong>Infected</strong> and <strong>R</strong> stands for <strong>Recovered</strong>,
-        and are the three compartments of the model. This model is a good approximation for
-        infectious diseases which are transmitted from human to human, and where recovery confers
-        lasting resistance. A typical member of the population moves from Susceptible to Infectious
-        to Recovered.
+        Here, <strong>S</strong> stands for <strong>Susceptible</strong>,
+        <strong>I</strong> stands for <strong>Infected</strong> and
+        <strong>R</strong> stands for <strong>Recovered</strong>, and are the
+        three compartments of the model. This model is a good approximation for
+        infectious diseases which are transmitted from human to human, and where
+        recovery confers lasting resistance. A typical member of the population
+        moves from Susceptible to Infectious to Recovered.
       </p>
       <p>\[S \rightarrow I \rightarrow R\]</p>
       <p>
-        Let <strong>S</strong>, <strong>I</strong>, <strong>R</strong> denote the total number of
-        members in each of the three compartments and <strong>N</strong>, the total population.
-        Assuming the dynamics of the epidemic to be much faster than that of birth and death, we can
-        safely assume <strong>N</strong> to be constant. We then have:
+        Let <strong>S</strong>, <strong>I</strong>, <strong>R</strong> denote
+        the total number of members in each of the three compartments and
+        <strong>N</strong>, the total population. Assuming the dynamics of the
+        epidemic to be much faster than that of birth and death, we can safely
+        assume <strong>N</strong> to be constant. We then have:
       </p>
       <p>\[S + I + R = N,\]</p>
       <p>\[\dfrac{dS}{dt}+\dfrac{dI}{dt}+\dfrac{dR}{dt} = 0\]</p>
       <p>where t is the independent variable measured in days.</p>
       <p>
-        Let <strong>β</strong> be the average number of contacts that an infected individual comes
-        with each day. Not all of them are going to be susceptible. If we assume a homogeneous
-        mixing of the population, then the fraction of contacts with susceptible is
-        <strong>S/N</strong>, hence one single infected person infects
-        <strong>βS/N</strong> individuals, whereas <strong>I</strong> of them infects
-        <strong>βSI/N</strong> susceptible individuals. Hence, the rate at which people are leaving
-        the susceptible compartment is:
+        Let <strong>β</strong> be the average number of contacts that an
+        infected individual comes with each day. Not all of them are going to be
+        susceptible. If we assume a homogeneous mixing of the population, then
+        the fraction of contacts with susceptible is <strong>S/N</strong>, hence
+        one single infected person infects <strong>βS/N</strong> individuals,
+        whereas <strong>I</strong> of them infects
+        <strong>βSI/N</strong> susceptible individuals. Hence, the rate at which
+        people are leaving the susceptible compartment is:
       </p>
       <p>\[\dfrac{dS}{dt} = -\beta\dfrac{SI}{N}\]</p>
       <p>
-        Further, let <strong>γ</strong> represents the fraction of infected people that are
-        recovering each day. If there are <strong>I</strong> infected people in total, then
-        <strong>γI</strong> people are recovering each day. Hence, the rate at which people are
-        getting recovered is:
+        Further, let <strong>γ</strong> represents the fraction of infected
+        people that are recovering each day. If there are
+        <strong>I</strong> infected people in total, then
+        <strong>γI</strong> people are recovering each day. Hence, the rate at
+        which people are getting recovered is:
       </p>
       <p>\[\dfrac{dR}{dt} = \gamma I\]</p>
       <p>Finally, rate at which people are getting infected each day is:</p>
       <p>\[\dfrac{dI}{dt}=\beta\dfrac{SI}{N}-\gamma I\]</p>
-      <p>The above three ordinary differential equations together describe the S-I-R model.</p>
+      <p>
+        The above three ordinary differential equations together describe the
+        S-I-R model.
+      </p>
       <h3>Basic reproduction rate</h3>
       <p>
-        <strong>β</strong> represents the average number of contacts that an infected individual
-        comes with each day, whereas <strong>1/β</strong> represents the time between two such
-        contacts. Also, <strong>γ</strong> represents the fraction of infected people that recover
-        each day, whereas <strong>1/γ</strong> represents the time it takes for an individual to
-        fully recover. If we represent:
+        <strong>β</strong> represents the average number of contacts that an
+        infected individual comes with each day, whereas
+        <strong>1/β</strong> represents the time between two such contacts.
+        Also, <strong>γ</strong> represents the fraction of infected people that
+        recover each day, whereas <strong>1/γ</strong> represents the time it
+        takes for an individual to fully recover. If we represent:
       </p>
       <p>\[T_c=1/\beta,\]</p>
       <p>\[T_r=1/\gamma\]</p>
       <p>then,</p>
       <p>\[\dfrac{T_c}{T_r} = \dfrac{\beta}{\gamma},\]</p>
       <p>
-        represents the average number of contacts an infected individual comes with others before
-        the infected has recovered. This ratio:
+        represents the average number of contacts an infected individual comes
+        with others before the infected has recovered. This ratio:
       </p>
       <p>\[R_o=\dfrac{\beta}{\gamma},\]</p>
       <p>
-        is called as the <strong>Basic reproduction number</strong>. Its role is extremely important
-        in predicting epidemic outbreaks. In fact, if we rewrite the equation for infectious
-        individuals as:
+        is called as the <strong>Basic reproduction number</strong>. Its role is
+        extremely important in predicting epidemic outbreaks. In fact, if we
+        rewrite the equation for infectious individuals as:
       </p>
       <p>\[\dfrac{dI}{dt}={(R_o\dfrac{S}{N}-1)}\gamma I,\]</p>
       <p>it means that if:</p>
@@ -130,47 +148,52 @@
       <p>then:</p>
       <p>\[\dfrac{dI}{dt}{(0)} &gt; 0,\]</p>
       <p>
-        i.e., and there will be a proper epidemic outbreak with an increase in the number of
-        infected population. On the contrary, if:
+        i.e., and there will be a proper epidemic outbreak with an increase in
+        the number of infected population. On the contrary, if:
       </p>
       <p>\[R_o &lt; \dfrac{N}{S{(0)}},\]</p>
       <p>then:</p>
       <p>\[\dfrac{dI}{dt}{(0)} &lt; 0,\]</p>
       <p>
-        i.e., the disease won&#39;t cause an epidemic outbreak regardless of the initial size of the
-        susceptible population.
+        i.e., the disease won&#39;t cause an epidemic outbreak regardless of the
+        initial size of the susceptible population.
       </p>
       <h3>SIR model with vital dynamics</h3>
       <p>
-        Our previous model was without the so-called vital dynamics i.e. it didn&#39;t take births
-        and deaths(due to other reasons) into account. In this section, we&#39;ll tweak our model to
-        account for the same.
+        Our previous model was without the so-called vital dynamics i.e. it
+        didn&#39;t take births and deaths(due to other reasons) into account. In
+        this section, we&#39;ll tweak our model to account for the same.
       </p>
       <p>
-        Let <strong>Λ</strong> be the rate at which new individuals are being born into the
-        population and <strong>μ</strong> be the fraction of the total population that dies each
-        day. The rate at which people are dying is <strong>μN</strong>. The rate at which the total
-        population <strong>N</strong> is changing is then given by:
+        Let <strong>Λ</strong> be the rate at which new individuals are being
+        born into the population and <strong>μ</strong> be the fraction of the
+        total population that dies each day. The rate at which people are dying
+        is <strong>μN</strong>. The rate at which the total population
+        <strong>N</strong> is changing is then given by:
       </p>
       <p>\[\Lambda-\mu N=\dfrac{dS}{dt}+\dfrac{dI}{dt}+\dfrac{dR}{dt},\]</p>
       <p>where,</p>
-      <p>We then have the following ordinary differential equations as our model:</p>
+      <p>
+        We then have the following ordinary differential equations as our model:
+      </p>
       <p>\[\dfrac{dS}{dt}=\Lambda-\beta\dfrac{SI}{N}-\mu S,\]</p>
       <p>\[\dfrac{dI}{dt} = \beta\dfrac{SI}{N}-\gamma I-\mu I,\]</p>
       <p>\[\dfrac{dR}{dt} = \gamma I -\mu R,\]</p>
       <h2>Elaborations on the basic SIR model</h2>
       <p>
-        Now that we have understood how to go about modelling a single outbreak, we can far easily
-        extend on our previous understanding to begin modelling more complicated and detailed
-        scenarios. Consider this section more as an exercise for yourself in modelling epidemics
-        with various compartments.
+        Now that we have understood how to go about modelling a single outbreak,
+        we can far easily extend on our previous understanding to begin
+        modelling more complicated and detailed scenarios. Consider this section
+        more as an exercise for yourself in modelling epidemics with various
+        compartments.
       </p>
       <h3>SIS model</h3>
       <p>
-        It&#39;s a model for diseases that don&#39;t lead to any long-lasting immunity. You become
-        susceptible again once you recover from the disease. Infections like common cold and
-        influenza are modelled this way. It consists of two compartments,
-        <strong>Susceptible</strong> and <strong>Infected</strong>:
+        It&#39;s a model for diseases that don&#39;t lead to any long-lasting
+        immunity. You become susceptible again once you recover from the
+        disease. Infections like common cold and influenza are modelled this
+        way. It consists of two compartments, <strong>Susceptible</strong> and
+        <strong>Infected</strong>:
       </p>
       <p>\[S\leftrightarrow I,\]</p>
       <p>and we have the following model:</p>
@@ -178,17 +201,18 @@
       <p>\[\dfrac{dI}{dt} = \beta\dfrac{SI}{N}-\gamma I\]</p>
       <h3>MSIR model</h3>
       <p>
-        Individuals born newly into the population have maternal antibodies passed onto them from
-        their mother&#39;s placenta and are immune for a few months against certain diseases like
-        measles. This is called passive immunity and we the denote its compartment by
+        Individuals born newly into the population have maternal antibodies
+        passed onto them from their mother&#39;s placenta and are immune for a
+        few months against certain diseases like measles. This is called passive
+        immunity and we the denote its compartment by
         <strong>M</strong>(Maternally derived immunity):
       </p>
       <p>\[M\rightarrow S\rightarrow I \rightarrow R\]</p>
       <p>
-        Let&#39;s assume that the birth rate of the population is <strong>Λ</strong> and
-        <strong>μ</strong> is the fraction of the total population that dies daily. If
-        <strong>𝛿</strong> fraction of babies leave the immune compartment every day then we have
-        the following model:
+        Let&#39;s assume that the birth rate of the population is
+        <strong>Λ</strong> and <strong>μ</strong> is the fraction of the total
+        population that dies daily. If <strong>𝛿</strong> fraction of babies
+        leave the immune compartment every day then we have the following model:
       </p>
       <p>\[\dfrac{dM}{dt}=\Lambda-\delta I-\mu I,\]</p>
       <p>\[\dfrac{dS}{dt} = \delta I-\beta\frac{SI}{N} -\mu S,\]</p>
@@ -196,15 +220,16 @@
       <p>\[\dfrac{dR}{dt}=\gamma I -\mu R,\]</p>
       <h3>SEIR model</h3>
       <p>
-        Generally, for some infections, infected people don&#39;t become infectious instantaneously.
-        Instead, there&#39;s an incubation period over which he become infectious. The individual is
-        neither susceptible nor infectious but is rather exposed to the infection, and we denote its
+        Generally, for some infections, infected people don&#39;t become
+        infectious instantaneously. Instead, there&#39;s an incubation period
+        over which he become infectious. The individual is neither susceptible
+        nor infectious but is rather exposed to the infection, and we denote its
         compartment by E:
       </p>
       <p>\[S \rightarrow E \rightarrow I \rightarrow R,\]</p>
       <p>
-        Assuming that a fraction ε of exposed people become infectious every day, we have the
-        following model:
+        Assuming that a fraction ε of exposed people become infectious every
+        day, we have the following model:
       </p>
       <p>\[\dfrac{dS}{dt} = -\beta\dfrac{SI}{N} -\mu S,\]</p>
       <p>\[\dfrac{dE}{dt}=\beta\dfrac{SI}{N} -\epsilon E-\mu E,\]</p>
@@ -213,14 +238,16 @@
     </div>
     <div class="footer">
       <div class="links">
-        <a class="fa fa-twitter" href="https://twitter.com/clinckzone" alt="Twitter"></a
-        ><a
+        <a
           class="fa fa-youtube"
           href="https://www.youtube.com/user/MrDivyanshu33"
           alt="Youtube"
         ></a
-        ><a class="fa fa-behance" href="https://www.behance.net/divyanshu33" alt="Behance"></a
-        ><a class="fa fa-github" href="https://github.com/clinckzone" alt="Github"></a
+        ><a
+          class="fa fa-github"
+          href="https://github.com/clinckzone"
+          alt="Github"
+        ></a
         ><a
           class="fa fa-linkedin"
           href="https://www.linkedin.com/in/divyanshu-tiwari33/"

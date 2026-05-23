@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>🌱 Implementing Debounce, Throttle and Curry in Javascript</title>
     <link rel="stylesheet" href="../css/page.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://kit.fontawesome.com/57a1b63118.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/57a1b63118.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="../js/resizeImage.js"></script>
     <script src="../js/mathJaxConfig.js"></script>
     <script
@@ -25,16 +28,40 @@
         </ul>
       </div>
     </div>
-    <div class="page"><h1>🌱 Implementing Debounce, Throttle and Curry in Javascript</h1><hr class="line"/><p>In this blog post I will be implementing the three most important interview questions that are generally asked in frontend interviews - How to implement Debounce, Curry and Throttle utility functions in Javascript Before you embark on these implementations, you need to be comfortable with the following features of Javascript - </p>
-<ul>
-<li>Closures</li>
-<li><code>this</code> keyword</li>
-<li><code>apply</code>, <code>call</code> and <code>bind</code></li>
-<li><strong>Arity</strong> of a function</li>
-</ul>
-<h2>Debounce</h2><h3>What is Debounce?</h3><p>What is Debounce? Debounce is a technique using which you can substitute multiple functions calls with a single function call that happens after a threshold <code>wait</code> time. Every subsequent call to the function cancels the previous call and will execute the current call only if the function gets called after a threshold <code>wait</code> time.</p>
-<h3>Implementation</h3><p>Scheduling the function call to happen after a <code>wait</code> time reminds one of <code>setTimeout</code> which calls the function after a particular amount of minimum delay. You can also cancel the function call using the <code>clearTimeout</code> function.</p>
-<pre><code class="language-javascript">function debounce(func, wait=0) {
+    <div class="page">
+      <h1>🌱 Implementing Debounce, Throttle and Curry in Javascript</h1>
+      <hr class="line" />
+      <p>
+        In this blog post I will be implementing the three most important
+        interview questions that are generally asked in frontend interviews -
+        How to implement Debounce, Curry and Throttle utility functions in
+        Javascript Before you embark on these implementations, you need to be
+        comfortable with the following features of Javascript -
+      </p>
+      <ul>
+        <li>Closures</li>
+        <li><code>this</code> keyword</li>
+        <li><code>apply</code>, <code>call</code> and <code>bind</code></li>
+        <li><strong>Arity</strong> of a function</li>
+      </ul>
+      <h2>Debounce</h2>
+      <h3>What is Debounce?</h3>
+      <p>
+        What is Debounce? Debounce is a technique using which you can substitute
+        multiple functions calls with a single function call that happens after
+        a threshold <code>wait</code> time. Every subsequent call to the
+        function cancels the previous call and will execute the current call
+        only if the function gets called after a threshold
+        <code>wait</code> time.
+      </p>
+      <h3>Implementation</h3>
+      <p>
+        Scheduling the function call to happen after a <code>wait</code> time
+        reminds one of <code>setTimeout</code> which calls the function after a
+        particular amount of minimum delay. You can also cancel the function
+        call using the <code>clearTimeout</code> function.
+      </p>
+      <pre><code class="language-javascript">function debounce(func, wait=0) {
 	let timerID = null;
 
 	const debounceFunc = function(...args) {
@@ -50,11 +77,32 @@
 	return debounceFunc;
 }
 </code></pre>
-<p>Here, we have leveraged the concept of <strong>closures</strong> to maintian access to the <code>timerID</code> inside the inner function and <code>setTimout</code>. This way we can cancel the call to <code>func</code> if it happens before the minimum <code>wait</code> time. </p>
-<p>Also notice, inside the <code>setTimeout</code> callback we are calling <code>func</code> directly with its arguments. We are however overlooking something here. We haven’t taken care of the context in which we are calling the original function. Since debounced function are supposed to behave the same way as the original function (execution wise), we would want to bound </p>
-<p><code>this</code> to the context where it was invoked when calling <code>func(…args)</code>, but here <code>this</code> is bound to the <code>global</code> context.</p>
-<p>To further check if this is how things are, we can try calling the debounced function over an <code>Object</code> to see if <code>this</code> is bound to its context.</p>
-<pre><code class="language-javascript">function sayHello() {
+      <p>
+        Here, we have leveraged the concept of <strong>closures</strong> to
+        maintian access to the <code>timerID</code> inside the inner function
+        and <code>setTimout</code>. This way we can cancel the call to
+        <code>func</code> if it happens before the minimum
+        <code>wait</code> time.
+      </p>
+      <p>
+        Also notice, inside the <code>setTimeout</code> callback we are calling
+        <code>func</code> directly with its arguments. We are however
+        overlooking something here. We haven’t taken care of the context in
+        which we are calling the original function. Since debounced function are
+        supposed to behave the same way as the original function (execution
+        wise), we would want to bound
+      </p>
+      <p>
+        <code>this</code> to the context where it was invoked when calling
+        <code>func(…args)</code>, but here <code>this</code> is bound to the
+        <code>global</code> context.
+      </p>
+      <p>
+        To further check if this is how things are, we can try calling the
+        debounced function over an <code>Object</code> to see if
+        <code>this</code> is bound to its context.
+      </p>
+      <pre><code class="language-javascript">function sayHello() {
 	console.log(`Hello, I am ${this.name}`);
 }
 
@@ -66,9 +114,36 @@ const human = {
 // What do you think the output here will be?
 human.speak();
 </code></pre>
-<ul class="single"><li class="image"><img src="../images/blog-implementing-debounce-throttle-and-curry-in-javascript-1.png" alt="Output from the code above" /><span>Output from the code above</span></li></ul><p>See? <code>func(…args)</code> invocation is not bound to the <code>this</code> value of the <code>Object</code>, instead here <code>this</code> refers to the <code>global</code> context.</p>
-<ul class="single"><li class="image"><img src="../images/blog-implementing-debounce-throttle-and-curry-in-javascript-2.png" alt="Actual value of this" /><span>Actual value of this</span></li></ul><h3>Updated implementation</h3><p>It’s simple to do it: We simply store the calling context of the debounced function in a <code>context</code> variable and pass it to <code>apply</code> while calling it on <code>func</code>. This way we successfully preserve the value of <code>this</code> when invoking <code>func</code></p>
-<pre><code class="language-javascript">function debounce(func, wait=0) {
+      <ul class="single">
+        <li class="image">
+          <img
+            src="../images/blog-implementing-debounce-throttle-and-curry-in-javascript-1.png"
+            alt="Output from the code above"
+          /><span>Output from the code above</span>
+        </li>
+      </ul>
+      <p>
+        See? <code>func(…args)</code> invocation is not bound to the
+        <code>this</code> value of the <code>Object</code>, instead here
+        <code>this</code> refers to the <code>global</code> context.
+      </p>
+      <ul class="single">
+        <li class="image">
+          <img
+            src="../images/blog-implementing-debounce-throttle-and-curry-in-javascript-2.png"
+            alt="Actual value of this"
+          /><span>Actual value of this</span>
+        </li>
+      </ul>
+      <h3>Updated implementation</h3>
+      <p>
+        It’s simple to do it: We simply store the calling context of the
+        debounced function in a <code>context</code> variable and pass it to
+        <code>apply</code> while calling it on <code>func</code>. This way we
+        successfully preserve the value of <code>this</code> when invoking
+        <code>func</code>
+      </p>
+      <pre><code class="language-javascript">function debounce(func, wait=0) {
 	let timerID = null;
 	const debouncedFunc = function(...args) {
 		const context = this;
@@ -80,8 +155,14 @@ human.speak();
 	return debounceFunc;
 }
 </code></pre>
-<p>Alternatively, instead of storing the value of <code>context</code> in a variable, you can use arrow function to define the <code>setTimout</code> callback. The value of <code>this</code> inside a arrow function is same as the context in which it has been created and is not bound to the environment in which the function is called.</p>
-<pre><code class="language-javascript">function debounce(func, wait=0) {
+      <p>
+        Alternatively, instead of storing the value of <code>context</code> in a
+        variable, you can use arrow function to define the
+        <code>setTimout</code> callback. The value of <code>this</code> inside a
+        arrow function is same as the context in which it has been created and
+        is not bound to the environment in which the function is called.
+      </p>
+      <pre><code class="language-javascript">function debounce(func, wait=0) {
 	let timerID = null;
 	const debouncedFunc = function(...args) {
 		timerID = setTimeout(() =&gt; {
@@ -92,32 +173,90 @@ human.speak();
 	return debounceFunc;
 }
 </code></pre>
-<p><strong>Note:</strong> However you need to be careful that <code>debouncedFunc</code> cannot be defined as an arrow function because in that case, <code>this</code> will be bound to the <code>global</code> context as <code>this</code> value in arrow functions is calculated at the time of creation and not during runtime from their environment in which they are being invoked.  </p>
-<p><strong>References:</strong> In case if you are a bit confused about the role of <code>this</code>, check out this awesome <a href="https://medium.com/@griffinmichl/implementing-debounce-in-javascript-eab51a12311e" target="_blank">article</a>.</p>
-<h2>Throttle</h2><p>Throttling is a technique using which you limit the invocation of a particular function to once every <code>n</code> seconds where <code>n</code> is the wait time. We will implement a function <code>throttle</code> that takes in a function and wait time as arguments and returns you a function that when executed can only be executed after the minimum specified wait time.</p>
-<h3>Implementation</h3><p>The above discussion should give you a hint that the function returned by throttling can only exist in two states:</p>
-<ul>
-<li><strong>Active</strong>: When active, it can be invoked immediately following which it enters the inactive state.</li>
-<li><strong>Inactive:</strong> When inactive, it cannot be executed and becomes active only after the minimum wait time.</li>
-</ul>
-<p>Note that we need to switch back to <strong>active</strong> mode after the wait time. This should give you a hint that <code>setTimeout</code> would be needed as switching back to <strong>active</strong> state is time dependent. Also, since there are only two states, we can use a boolean to model it. </p>
-<p>Here’s how we will go about <code>throttle</code>&#39;s implementation:</p>
-<ul>
-<li>Let’s assume that <code>throttle</code> takes in two arguments, <code>func</code> and <code>wait</code>. Where <code>func</code> is the function to be throttled and <code>wait</code> is the minimum wait time until the next invocation.</li>
-<li>We define a variable <code>flag</code> inside <code>throttle</code> and set it to <code>true</code>. This keeps track of the state of the function returned by it.</li>
-<li>Inside the returned function, we check if the <code>flag</code> is <code>true</code>.<ul>
-<li>If <code>true</code><ul>
-<li>Allow the immediate invocation of <code>func</code>.</li>
-<li>Set the flag to <code>false</code></li>
-<li>Start a timer to restore the flag back to <code>true</code> after <code>wait</code> time.</li>
-</ul>
-</li>
-<li>If <code>false</code>, do nothing.</li>
-</ul>
-</li>
-</ul>
-<p>Here’s the full implementation in code:</p>
-<pre><code class="language-javascript">function throttle(func, wait) {
+      <p>
+        <strong>Note:</strong> However you need to be careful that
+        <code>debouncedFunc</code> cannot be defined as an arrow function
+        because in that case, <code>this</code> will be bound to the
+        <code>global</code> context as <code>this</code> value in arrow
+        functions is calculated at the time of creation and not during runtime
+        from their environment in which they are being invoked.
+      </p>
+      <p>
+        <strong>References:</strong> In case if you are a bit confused about the
+        role of <code>this</code>, check out this awesome
+        <a
+          href="https://medium.com/@griffinmichl/implementing-debounce-in-javascript-eab51a12311e"
+          target="_blank"
+          >article</a
+        >.
+      </p>
+      <h2>Throttle</h2>
+      <p>
+        Throttling is a technique using which you limit the invocation of a
+        particular function to once every <code>n</code> seconds where
+        <code>n</code> is the wait time. We will implement a function
+        <code>throttle</code> that takes in a function and wait time as
+        arguments and returns you a function that when executed can only be
+        executed after the minimum specified wait time.
+      </p>
+      <h3>Implementation</h3>
+      <p>
+        The above discussion should give you a hint that the function returned
+        by throttling can only exist in two states:
+      </p>
+      <ul>
+        <li>
+          <strong>Active</strong>: When active, it can be invoked immediately
+          following which it enters the inactive state.
+        </li>
+        <li>
+          <strong>Inactive:</strong> When inactive, it cannot be executed and
+          becomes active only after the minimum wait time.
+        </li>
+      </ul>
+      <p>
+        Note that we need to switch back to <strong>active</strong> mode after
+        the wait time. This should give you a hint that
+        <code>setTimeout</code> would be needed as switching back to
+        <strong>active</strong> state is time dependent. Also, since there are
+        only two states, we can use a boolean to model it.
+      </p>
+      <p>
+        Here’s how we will go about <code>throttle</code>&#39;s implementation:
+      </p>
+      <ul>
+        <li>
+          Let’s assume that <code>throttle</code> takes in two arguments,
+          <code>func</code> and <code>wait</code>. Where <code>func</code> is
+          the function to be throttled and <code>wait</code> is the minimum wait
+          time until the next invocation.
+        </li>
+        <li>
+          We define a variable <code>flag</code> inside
+          <code>throttle</code> and set it to <code>true</code>. This keeps
+          track of the state of the function returned by it.
+        </li>
+        <li>
+          Inside the returned function, we check if the <code>flag</code> is
+          <code>true</code>.
+          <ul>
+            <li>
+              If <code>true</code>
+              <ul>
+                <li>Allow the immediate invocation of <code>func</code>.</li>
+                <li>Set the flag to <code>false</code></li>
+                <li>
+                  Start a timer to restore the flag back to
+                  <code>true</code> after <code>wait</code> time.
+                </li>
+              </ul>
+            </li>
+            <li>If <code>false</code>, do nothing.</li>
+          </ul>
+        </li>
+      </ul>
+      <p>Here’s the full implementation in code:</p>
+      <pre><code class="language-javascript">function throttle(func, wait) {
   let flag = true;
   return function(...args) {
     if(flag) {
@@ -128,13 +267,31 @@ human.speak();
   }
 }
 </code></pre>
-<p>Note that since throttled functions are used just like the original function we should preserve the value of <strong><code>this</code></strong> when invoking the original callback functions. Therefore we cannot:</p>
-<ul>
-<li>Declare the inner returned function as an arrow function as it derives its <code>this</code> value from its lexical scope.</li>
-<li>Invoke the callback function as <code>func(...args)</code> because it will not forward the correct <code>this</code> context.</li>
-</ul>
-<h2>Curry</h2><p>Currying is a technique of converting a function which takes multiple arguments into a sequence of functions that each takes a single argument. Here we will be implementing a function called <code>curry</code> that creates a curried function for you. As an example, this is how a normal function differs from a curried function:</p>
-<pre><code class="language-javascript">const sum = function(a, b) {
+      <p>
+        Note that since throttled functions are used just like the original
+        function we should preserve the value of <strong
+          ><code>this</code></strong
+        > when invoking the original callback functions. Therefore we cannot:
+      </p>
+      <ul>
+        <li>
+          Declare the inner returned function as an arrow function as it derives
+          its <code>this</code> value from its lexical scope.
+        </li>
+        <li>
+          Invoke the callback function as <code>func(...args)</code> because it
+          will not forward the correct <code>this</code> context.
+        </li>
+      </ul>
+      <h2>Curry</h2>
+      <p>
+        Currying is a technique of converting a function which takes multiple
+        arguments into a sequence of functions that each takes a single
+        argument. Here we will be implementing a function called
+        <code>curry</code> that creates a curried function for you. As an
+        example, this is how a normal function differs from a curried function:
+      </p>
+      <pre><code class="language-javascript">const sum = function(a, b) {
 	return a+b;
 }
 
@@ -146,8 +303,12 @@ curriedSum(2)(3); // Gives you 5
 const alreadyAddedThree = sum(3);
 alreadyAddedThree(2) // Gives you 5
 </code></pre>
-<p>To better understand the implementation of a curry function that takes a generic function with ‘n’ arguments let’s try implementing a curried function for a function with 3 arguments first:</p>
-<pre><code class="language-javascript">const sumABC = function(a, b, c) {
+      <p>
+        To better understand the implementation of a curry function that takes a
+        generic function with ‘n’ arguments let’s try implementing a curried
+        function for a function with 3 arguments first:
+      </p>
+      <pre><code class="language-javascript">const sumABC = function(a, b, c) {
 	return a + b + c;
 }
 
@@ -160,26 +321,56 @@ const curriedSumABC = function(a) {
 	}
 }
 </code></pre>
-<p>Here’s something you would notice from above - You keep returning a function until you run out of arguments, after which you return the calculated sum <code>a + b + c</code>. Also notice how we leverage <strong>Closures</strong> to access variables from the lexical scope for calculation inside the inner most function.</p>
-<h3>Implementation</h3><p>From the above discussion it is evident that we need to keep a record of the number of arguments that have been accepted so far in the sequential function calls. Moreover, the <code>curry</code> function needs to return a function that accepts a single argument which when invoked either computes the value of the callback or returns itself.</p>
-<p>Here’s how we will go about its implementation:</p>
-<ul>
-<li>Keep an array <code>args</code> to keep track of all the arguments that have been passed.</li>
-<li>Return a named function <code>curried</code> which accepts a single argument <code>arg</code>, inside it:<ul>
-<li>Check if the <code>arg</code> passed to it is not <code>undefined</code><ul>
-<li>If it’s not <code>undefined</code> push it to <code>args</code> array</li>
-</ul>
-</li>
-<li>Check if the <code>args</code> array has the same length as the <strong>arity</strong> of the callback function.<ul>
-<li>If it does, execute the callback and <code>return</code></li>
-<li>Else, the function should <code>return</code> itself</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>Here’s the full implementation in code:</p>
-<pre><code class="language-javascript">function curry(func) {
+      <p>
+        Here’s something you would notice from above - You keep returning a
+        function until you run out of arguments, after which you return the
+        calculated sum <code>a + b + c</code>. Also notice how we leverage
+        <strong>Closures</strong> to access variables from the lexical scope for
+        calculation inside the inner most function.
+      </p>
+      <h3>Implementation</h3>
+      <p>
+        From the above discussion it is evident that we need to keep a record of
+        the number of arguments that have been accepted so far in the sequential
+        function calls. Moreover, the <code>curry</code> function needs to
+        return a function that accepts a single argument which when invoked
+        either computes the value of the callback or returns itself.
+      </p>
+      <p>Here’s how we will go about its implementation:</p>
+      <ul>
+        <li>
+          Keep an array <code>args</code> to keep track of all the arguments
+          that have been passed.
+        </li>
+        <li>
+          Return a named function <code>curried</code> which accepts a single
+          argument <code>arg</code>, inside it:
+          <ul>
+            <li>
+              Check if the <code>arg</code> passed to it is not
+              <code>undefined</code>
+              <ul>
+                <li>
+                  If it’s not <code>undefined</code> push it to
+                  <code>args</code> array
+                </li>
+              </ul>
+            </li>
+            <li>
+              Check if the <code>args</code> array has the same length as the
+              <strong>arity</strong> of the callback function.
+              <ul>
+                <li>
+                  If it does, execute the callback and <code>return</code>
+                </li>
+                <li>Else, the function should <code>return</code> itself</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <p>Here’s the full implementation in code:</p>
+      <pre><code class="language-javascript">function curry(func) {
     const args = [];
     return function curried(arg) {
         if(arg !== undefined) args.push(arg);
@@ -192,14 +383,46 @@ const curriedSumABC = function(a) {
     };
 }
 </code></pre>
-<p>Note the use of <code>apply</code> and <code>bind</code> functions respectively to preserve the <code>this</code> context in which the first call to the curried function was made. Again, we didn’t define the inner function as an arrow function since arrow functions derive their <code>this</code> context from their lexical scope at the time of creation (which is <code>global</code> in this case) and not during runtime from their environment.</p>
-<h3>Mistake</h3><p>There’s one huge mistake in this implementation though. Can you spot it? You can only use the curried function once after which it becomes useless. Why? The issue is with shared <code>args</code> array in the lexical scope of the <code>curry</code> function. Once you&#39;ve curried the function and provided enough arguments to invoke the original function (<code>func</code>), the <code>args</code> array retains those arguments. This means that any subsequent calls to the curried function will continue to use the same accumulated arguments, making the curried function effectively unusable after the first complete invocation.</p>
-<h3>Updated implementation</h3><p>In fact to fix this, we need to get rid of <code>args</code> variable from the lexical scope of inner <code>curried</code> function altogether. We make two changes respectively:</p>
-<ul>
-<li>We update the inner function <code>curried</code> to take a spread of arguments <code>...args</code>, and</li>
-<li>If the number of arguments is insufficient, the <code>curried</code> function is returned with its context bound to the current <code>this</code> and the accumulated arguments.</li>
-</ul>
-<pre><code class="language-javascript">function curry(func) {
+      <p>
+        Note the use of <code>apply</code> and <code>bind</code> functions
+        respectively to preserve the <code>this</code> context in which the
+        first call to the curried function was made. Again, we didn’t define the
+        inner function as an arrow function since arrow functions derive their
+        <code>this</code> context from their lexical scope at the time of
+        creation (which is <code>global</code> in this case) and not during
+        runtime from their environment.
+      </p>
+      <h3>Mistake</h3>
+      <p>
+        There’s one huge mistake in this implementation though. Can you spot it?
+        You can only use the curried function once after which it becomes
+        useless. Why? The issue is with shared <code>args</code> array in the
+        lexical scope of the <code>curry</code> function. Once you&#39;ve
+        curried the function and provided enough arguments to invoke the
+        original function (<code>func</code>), the <code>args</code> array
+        retains those arguments. This means that any subsequent calls to the
+        curried function will continue to use the same accumulated arguments,
+        making the curried function effectively unusable after the first
+        complete invocation.
+      </p>
+      <h3>Updated implementation</h3>
+      <p>
+        In fact to fix this, we need to get rid of <code>args</code> variable
+        from the lexical scope of inner <code>curried</code> function
+        altogether. We make two changes respectively:
+      </p>
+      <ul>
+        <li>
+          We update the inner function <code>curried</code> to take a spread of
+          arguments <code>...args</code>, and
+        </li>
+        <li>
+          If the number of arguments is insufficient, the
+          <code>curried</code> function is returned with its context bound to
+          the current <code>this</code> and the accumulated arguments.
+        </li>
+      </ul>
+      <pre><code class="language-javascript">function curry(func) {
     return function curried(...args) {
         if(args.length &gt;= func.length) {
             return func.apply(this, args);
@@ -209,18 +432,26 @@ const curriedSumABC = function(a) {
     };
 }
 </code></pre>
-<p>So basically we fix this issue by not relying on a shared <code>args</code> array in the outer scope. Instead, it accumulates arguments using the rest parameter and binds them to the curried function using <code>bind</code>, ensuring that each curried function has its own set of arguments.</p>
-</div>
+      <p>
+        So basically we fix this issue by not relying on a shared
+        <code>args</code> array in the outer scope. Instead, it accumulates
+        arguments using the rest parameter and binds them to the curried
+        function using <code>bind</code>, ensuring that each curried function
+        has its own set of arguments.
+      </p>
+    </div>
     <div class="footer">
       <div class="links">
-        <a class="fa fa-twitter" href="https://twitter.com/clinckzone" alt="Twitter"></a
-        ><a
+        <a
           class="fa fa-youtube"
           href="https://www.youtube.com/user/MrDivyanshu33"
           alt="Youtube"
         ></a
-        ><a class="fa fa-behance" href="https://www.behance.net/divyanshu33" alt="Behance"></a
-        ><a class="fa fa-github" href="https://github.com/clinckzone" alt="Github"></a
+        ><a
+          class="fa fa-github"
+          href="https://github.com/clinckzone"
+          alt="Github"
+        ></a
         ><a
           class="fa fa-linkedin"
           href="https://www.linkedin.com/in/divyanshu-tiwari33/"
