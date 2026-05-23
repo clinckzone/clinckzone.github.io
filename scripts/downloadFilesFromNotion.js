@@ -101,7 +101,9 @@ async function updateImageUrlsInMarkdown(mdString, filename) {
   // Download images asynchronously
   console.log(`Downloading ${imageUrls.length} images in the page`);
   await Promise.all(
-    imageUrls.map(({ originalUrl, newFilename }) => downloadImage(originalUrl, newFilename))
+    imageUrls.map(({ originalUrl, newFilename }) =>
+      downloadImage(originalUrl, newFilename),
+    ),
   );
 
   // Replace Markdown content with new local paths
@@ -120,13 +122,14 @@ async function addPageToWebsite(page) {
     // Get the page title
     let title = "Untitled";
     const titleProperty = page.properties.Name;
-    if (titleProperty && titleProperty.type === "title" && titleProperty.title.length > 0) {
+    if (
+      titleProperty &&
+      titleProperty.type === "title" &&
+      titleProperty.title.length > 0
+    ) {
       title = titleProperty.title.map((part) => part.plain_text).join("");
     }
 
-    console.log(`Exporting page: ${title}`);
-    const mdBlocks = await n2m.pageToMarkdown(page.id);
-    const mdString = n2m.toMarkdownString(mdBlocks).parent;
     const pageCategory = page.properties.Category.select.name.toLowerCase();
 
     // Sanitize the title for filename
@@ -136,8 +139,29 @@ async function addPageToWebsite(page) {
       .toLowerCase();
     const completefileName = `${pageCategory}-${sanitizedFilename}`;
 
+    // Skip if a card for this page already exists on the listing page.
+    // Remove the card manually to force a re-publish.
+    const listingFilePath = path.resolve(__dirname, `../${pageCategory}.html`);
+    if (fs.existsSync(listingFilePath)) {
+      const listingDom = new JSDOM(fs.readFileSync(listingFilePath, "utf-8"));
+      const existingCard = listingDom.window.document.querySelector(
+        `a[href="${pageCategory}/${completefileName}.html"]`,
+      );
+      if (existingCard) {
+        console.log(`⏭️  Skipping ${completefileName}: already listed`);
+        return;
+      }
+    }
+
+    console.log(`Exporting page: ${title}`);
+    const mdBlocks = await n2m.pageToMarkdown(page.id);
+    const mdString = n2m.toMarkdownString(mdBlocks).parent;
+
     // Downloads and replaces all the remote image urls with local ones
-    const updatedMdString = await updateImageUrlsInMarkdown(mdString, completefileName);
+    const updatedMdString = await updateImageUrlsInMarkdown(
+      mdString,
+      completefileName,
+    );
 
     // Define the output path
     const outputDir = path.resolve(__dirname, `../${pageCategory}`);
@@ -156,11 +180,17 @@ async function addPageToWebsite(page) {
     exportMarkdownToHtml(mdFilePath);
     console.log(`✅ Exported: ${completefileName}.html`);
 
+    // Description is a rich_text property; safe-read for pages without it set.
+    const subtitle =
+      page.properties.Description?.rich_text
+        ?.map((part) => part.plain_text)
+        .join("") ?? "";
+
     // Page metadata
     const metadata = {
       coverUrl: page.cover.external.url,
       title,
-      subtitle: "",
+      subtitle,
       tags: page.properties.Tags.multi_select.map((tag) => tag.name),
       date: formatIsoDateToDayMonthYear(page.properties.Created.created_time),
     };
