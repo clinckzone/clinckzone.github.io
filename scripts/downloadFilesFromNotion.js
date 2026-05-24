@@ -190,9 +190,17 @@ async function addPageToWebsite(page) {
     const dateIso =
       page.properties.Date?.date?.start ?? page.properties.Created.created_time;
 
+    // Cover can be either an external URL or a Notion-uploaded file (with a
+    // short-lived signed URL). Either is fine since we download immediately.
+    const coverUrl = page.cover?.external?.url ?? page.cover?.file?.url ?? null;
+    if (!coverUrl) {
+      console.error(`❌ No cover image set for ${completefileName}, skipping`);
+      return;
+    }
+
     // Page metadata
     const metadata = {
-      coverUrl: page.cover.external.url,
+      coverUrl,
       title,
       subtitle,
       tags: page.properties.Tags.multi_select.map((tag) => tag.name),

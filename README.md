@@ -59,7 +59,7 @@ The publishing script reads the following properties off each page. Names are ca
 | `Tags`        | Multi-select    | Rendered as tag chips on the listing card           |
 | `Description` | Text (rich_text)| Card subtitle/description                           |
 | `Created`     | Created time    | Date on the listing card                            |
-| _Page cover_  | External URL    | Must be an external URL (Notion-hosted covers will throw — the script reads `page.cover.external.url`) |
+| _Page cover_  | External URL or upload | Either works. The script downloads the cover to `images/` immediately, so Notion-uploaded covers (with short-lived signed URLs) are fine too. |
 
 Categories `blog` and `projects` are the only ones with existing listing pages (`blog.html`, `projects.html`). Adding a new category means hand-creating a listing HTML for it.
 
