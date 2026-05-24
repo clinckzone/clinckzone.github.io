@@ -11,7 +11,7 @@ I am 27 years old and I am starting a second bachelor's degree in Electronics En
 ## How it started
 
 
-I joined IIT Roorkee in 2017 to study Architecture. I chose it because I wanted a creative career, but it became clear fairly quickly that I wasn't particularly curious about architecture as a field. I didn't find myself wanting to go deeper into it. What I did find interesting was a research project I took up in my second year, where I built a hardware prototype to dynamically control an air conditioner's temperature based on indoor and outdoor differentials. It was my first time building technology for actual human use, and I found it genuinely exciting. That project introduced me to HCI, and from there my focus shifted toward software and interface design.
+I joined IIT Roorkee in 2017 to study Architecture. I chose it because I wanted a creative career, but it became clear fairly quickly that I wasn't particularly curious about architecture as a field. I didn't find myself wanting to go deeper into it. What I did find interesting was programming and especially a research project I took up in my second year, where I built a hardware prototype to dynamically control an air conditioner's temperature based on indoor and outdoor differentials. It was my first time building technology for actual human use, and I found it genuinely exciting. That project introduced me to HCI, and from there my focus shifted toward software and interface design.
 
 
 I spent the rest of my undergrad building in that direction independently, since there were no HCI researchers at my college. I published work at CHI Play 2020, worked as a research assistant in a Research Lab, and eventually joined Chronicle straight out of college as an early engineer in 2022. At Chronicle, we were building presentation software and I got to work on some interesting GUI problems. A year later in 2023, I left the job and seriously started thinking about graduate school in HCI as next step in my career.
@@ -20,10 +20,10 @@ I spent the rest of my undergrad building in that direction independently, since
 ## The HCI detour
 
 
-I had been working with Prof. Zhu-tian Chen informally since August 2024, alongside my day job at yet another startup, helping with his startup and a research project on using AI agents for data science workflows. I received a PhD offer from the Computer Science Department at the University of Minnesota. I spent months thinking about whether to accept it.
+To prepare my profile, I started working with [Prof. Zhu-tian Chen](https://chenzhutian.org/) informally in August 2024, alongside my day job (at yet another startup) helping with his startup and a research project on using AI agents for data science workflows. I received a PhD offer to work with him in the Computer Science Department at the University of Minnesota. I spent months thinking about whether to accept it.
 
 
-I ultimately declined. Part of the reason was personal. I had recently met someone I am very happy with, and I wasn't willing to do five years of long distance. But there was another reason that I only became clear about after the fact. I continued the internship with Prof. Chen after declining the offer, and somewhere during that time I realised that I would probably have dropped out of the PhD if I had gone. I enjoyed building technical systems. But I did not feel genuinely curious about HCI research questions. I wasn't motivated to read the literature or think deeply about novel interactions for their own sake. The desire to pursue a PhD in HCI was driven more by extrinsic motivation (prestige and a life in the US) than real interest.
+I ultimately declined. Part of the reason was personal. I had recently met someone I am very happy with, and wasn't willing to do five years of long distance. But there was another reason that I only became clear about after the fact. I continued the internship with Prof. Chen after declining the offer, and somewhere during that time I realised that I would probably have dropped out of the PhD if I had gone. I enjoyed building technical systems. But I did not feel genuinely curious about HCI research questions. I wasn't motivated to read the literature or think deeply about novel interactions for their own sake. The desire to pursue a PhD in HCI was driven more by extrinsic motivation (prestige of being a PhD and a life in the US) than real interest.
 
 
 ## Why I had stayed away from electronics
@@ -41,10 +41,10 @@ Although the HCI path felt like it had more prestige and clearer external valida
 ## Why I finally decided to go for it
 
 
-After declining the PhD and ending the internship with Prof. Chen, I had to figure out what I actually wanted to do. I noted my geniune curiosity which brought me back to the same things — embedded systems, low-level programming, the kind of work that requires understanding engineering at a level that most software people don't bother with.
+After declining the PhD and ending the internship with Prof. Chen, I had to figure out what I actually wanted to do. I noted my geniune curiosity which regularly brought me back to the same things — embedded systems, low-level programming, the kind of work that requires understanding engineering at a level that most software people don't bother with.
 
 
-I also read about where India is headed as a country in terms of manufacturing and deep technology. The space sector here is growing. Companies like Pixxel are doing real work. There is a genuine need for engineers who understand both software and hardware, and there are very few people with that combination of skills. That felt like a more meaningful place to contribute than yet another web product.
+I have also been reading about where India is heading as a country in terms of manufacturing and deep tech. The space sector here is growing. Companies like Pixxel and Skyroot are doing real work. There is a genuine need for engineers who can build hardware, and there are very few people with that combination of skills. That felt like a more meaningful place to contribute than yet another web product.
 
 
 So I enrolled in a second bachelor's in Electronic Systems, starting September 2025. My goal for the near term is to build a strong enough foundation in electronics and embedded systems to join a space-tech startup in India as an embedded software engineer.
