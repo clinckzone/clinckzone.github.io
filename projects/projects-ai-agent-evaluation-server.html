@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+  <head>
+    <title>🧪 AI Agent Evaluation Server</title>
+    <link rel="stylesheet" href="../css/page.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/57a1b63118.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../js/resizeImage.js"></script>
+    <script src="../js/mathJaxConfig.js"></script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-container">
+        <div class="logo"><a href="../index.html">💻</a></div>
+        <ul class="page-list">
+          <li><a href="../about.html">About</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="../projects.html">Projects</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page">
+      <h1>🧪 AI Agent Evaluation Server</h1>
+      <hr class="line" />
+      <p>
+        The
+        <a href="https://visxgenai.github.io/2025/index.html" target="_blank"
+          >Vis x GenAI workshop</a
+        >
+        at IEEE VIS 2025 invited participants to build AI agents that could
+        autonomously generate data visualizations and explanations from
+        real-world datasets. Running a challenge like this needs a way for
+        participants to submit their agents and a way to actually run those
+        agents in a controlled environment. That&#39;s what this server does.
+      </p>
+      <p>
+        The challenge had a few requirements that shaped the system.
+        Participants needed to
+        <strong>sign up, form teams, and submit code</strong> through a web
+        interface. Each submission had to run in
+        <strong>isolation</strong> because participants&#39; code is arbitrary
+        and untrusted. The agents needed access to
+        <strong>LLM APIs</strong> like OpenAI and Azure OpenAI, with keys
+        provided by us so participants didn&#39;t have to bring their own. And
+        the results had to feed a <strong>public leaderboard</strong> showing
+        each team&#39;s best output.
+      </p>
+      <h2>Architecture</h2>
+      <p>
+        The system is split into four pieces that communicate over a shared
+        Postgres database and a Redis queue.
+      </p>
+      <ul>
+        <li>
+          <strong>Web service</strong> (<a
+            href="https://fastapi.tiangolo.com/"
+            target="_blank"
+            >FastAPI</a
+          >) — handles authentication, submission uploads, team management, and
+          the leaderboard. Exposes a REST API that the
+          <a
+            href="https://amplify.dvsuyr25l38y1.amplifyapp.com/archive/2025"
+            target="_blank"
+            >frontend</a
+          >
+          consumes.
+        </li>
+        <li>
+          <strong>Worker</strong> (Celery) — picks submissions off the Redis
+          queue, spins up a fresh Docker container per submission, and writes
+          results back to the database.
+        </li>
+        <li>
+          <strong>Evaluation container</strong> — the actual sandbox. Each
+          submission runs here, with the LLM API keys injected as environment
+          variables. The container produces an <code>output.pdf</code> which
+          gets stored and made available via the API.
+        </li>
+        <li>
+          <strong>Postgres</strong> — stores users, teams, submissions, and
+          metadata. Redis is just the task broker.
+        </li>
+      </ul>
+      <h2>How a submission flows</h2>
+      <p>
+        When a participant uploads their agent as a ZIP file, the web service
+        unpacks it, validates that it contains the expected files (<code
+          >agent.py</code
+        >
+        and <code>requirements.txt</code>), and inserts a submission record. It
+        then dispatches a Celery task with the submission ID.
+      </p>
+      <p>
+        The worker picks up the task, builds a Docker image based on the
+        participant&#39;s <code>requirements.txt</code>, and runs the container.
+        Inside the container, the evaluation script dynamically loads the
+        participant&#39;s <code>agent.py</code>, instantiates their
+        <code>Agent</code> class, calls <code>initialize()</code> and
+        <code>process()</code>, and captures the output PDF. The container is
+        short-lived and gets torn down once evaluation finishes.
+      </p>
+      <p>
+        This isolation matters because we have no idea what&#39;s in the
+        participant&#39;s code. The container runs as a non-privileged user with
+        a strict time and memory budget. If an agent crashes, hangs, or tries
+        something malicious, the blast radius is one container.
+      </p>
+      <h2>Agent interface</h2>
+      <p>
+        Each participant implements a simple interface in <code>agent.py</code>:
+      </p>
+      <pre><code class="language-python">class Agent:
+    def initialize(self):
+        &quot;&quot;&quot;Set up the agent. Called once before process.&quot;&quot;&quot;
+        pass
+
+    def process(self, input_data: dict) -&gt; dict:
+        &quot;&quot;&quot;Run the agent on a single input.&quot;&quot;&quot;
+        pass
+</code></pre>
+      <p>
+        The agent is expected to produce a single <code>output.pdf</code> at the
+        root of the container — that PDF is the artifact that gets stored
+        against the submission and shown on the leaderboard.
+      </p>
+      <h2>My role</h2>
+      <p>
+        I was responsible for designing and implementing this server end-to-end.
+        That covered the data model and API surface, the Docker sandbox, the
+        Celery + Redis pipeline, and packaging everything so it could be brought
+        up or torn down with a single script (<code>./run.sh dev</code> for
+        development, <code>./run.sh prod</code> for production).
+      </p>
+      <h2>Outcome</h2>
+      <p>
+        The platform went live for IEEE VIS 2025 and hosted the workshop
+        challenge submissions. Each team&#39;s agent output got picked up,
+        evaluated, and surfaced on
+        <a
+          href="https://amplify.dvsuyr25l38y1.amplifyapp.com/archive/2025"
+          target="_blank"
+          >the platform</a
+        >.
+      </p>
+    </div>
+    <div class="footer">
+      <div class="links">
+        <a
+          class="fa fa-youtube"
+          href="https://www.youtube.com/user/MrDivyanshu33"
+          alt="Youtube"
+        ></a
+        ><a
+          class="fa fa-github"
+          href="https://github.com/clinckzone"
+          alt="Github"
+        ></a
+        ><a
+          class="fa fa-linkedin"
+          href="https://www.linkedin.com/in/divyanshu-tiwari33/"
+          alt="Linkedin"
+        ></a
+        ><a class="fa fa-envelope" href="mailto:dtiwari@ar.iitr.ac.in?"></a>
+      </div>
+    </div>
+  </body>
+</html>
