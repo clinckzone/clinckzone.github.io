@@ -186,13 +186,17 @@ async function addPageToWebsite(page) {
         ?.map((part) => part.plain_text)
         .join("") ?? "";
 
+    // Prefer the manual Date property; fall back to the auto Created timestamp.
+    const dateIso =
+      page.properties.Date?.date?.start ?? page.properties.Created.created_time;
+
     // Page metadata
     const metadata = {
       coverUrl: page.cover.external.url,
       title,
       subtitle,
       tags: page.properties.Tags.multi_select.map((tag) => tag.name),
-      date: formatIsoDateToDayMonthYear(page.properties.Created.created_time),
+      date: formatIsoDateToDayMonthYear(dateIso),
     };
 
     // Create a listing from the page metadata
