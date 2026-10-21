@@ -1,0 +1,63 @@
+name: Publish from Notion
+
+on:
+  schedule:
+    # Every day at 00:37 UTC (06:07 IST). Off the hour, since GitHub delays
+    # scheduled runs that start exactly on the hour.
+    - cron: "37 0 * * *"
+  # Adds a "Run workflow" button under the Actions tab for publishing right away.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Never let two runs build and push at the same time.
+concurrency:
+  group: publish-from-notion
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          # The pre-commit hook isn't needed on CI.
+          HUSKY: 0
+
+      - name: Pull Complete pages from Notion and build them
+        run: npm run pull-and-build
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+
+      - name: Format generated files
+        # Does what the pre-commit hook does locally: Prettier on new or
+        # changed .html/.css/.json files.
+        run: |
+          git add -A
+          git diff --cached --name-only --diff-filter=AM \
+            | grep -E '\.(html|css|json)$' \
+            | xargs -r npx prettier --write
+          git add -A
+
+      - name: Commit and push if anything changed
+        run: |
+          if git diff --cached --quiet; then
+            echo "Nothing new to publish."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Publish new pages from Notion"
+          git push
