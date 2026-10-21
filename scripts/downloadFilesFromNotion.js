@@ -11,6 +11,7 @@ const { formatIsoDateToDayMonthYear } = require("./utils/formatIsoDate.js");
 const { exportMarkdownToHtml } = require("./utils/convertMarkdownToHtml.js");
 const { sortListingCards } = require("./utils/sortListingCards.js");
 const { addImagePlaceholders } = require("./utils/addImagePlaceholders.js");
+const { syncFeatured } = require("./utils/syncFeatured.js");
 
 // Initialize Notion client
 const notion = new Client({
@@ -240,6 +241,9 @@ async function main() {
       await addPageToWebsite(page);
     }
   }
+
+  // Featured on the home page = first two projects + first blog post
+  syncFeatured();
 
   console.log("✅ Export completed.");
 }
