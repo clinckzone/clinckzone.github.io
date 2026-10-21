@@ -9,6 +9,7 @@ const { NotionToMarkdown } = require("notion-to-md");
 const { downloadImage } = require("./utils/downloadImagesToLocal.js");
 const { formatIsoDateToDayMonthYear } = require("./utils/formatIsoDate.js");
 const { exportMarkdownToHtml } = require("./utils/convertMarkdownToHtml.js");
+const { sortListingCards } = require("./utils/sortListingCards.js");
 
 // Initialize Notion client
 const notion = new Client({
@@ -77,6 +78,9 @@ function listPageOnWebsite(pageCategory, filename, metadata) {
 
   // Append it to the existing .project-list
   projectList.appendChild(newListItem);
+
+  // Newest dated posts first, then undated posts in their existing order
+  sortListingCards(document);
 
   // Serialize the updated DOM back to HTML
   const updatedHTML = dom.serialize();

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
-    "pull-and-build": "node scripts/downloadFilesFromNotion.js"
+    "pull-and-build": "node scripts/downloadFilesFromNotion.js",
+    "sort-listings": "node scripts/sortListings.js"
   },
   "author": "Divyanshu",
   "license": "ISC",

@@ -100,6 +100,14 @@ npm run pull-and-build
 # equivalent to: node scripts/downloadFilesFromNotion.js
 ```
 
+### `scripts/sortListings.js`
+
+Re-sorts the cards on `blog.html` and `projects.html`: dated posts first, newest to oldest, then undated posts in their existing order. The publishing script applies the same sort whenever it adds a card, so this is only needed after editing a listing by hand.
+
+```bash
+npm run sort-listings
+```
+
 ### `scripts/bulkConvertFiles.js`
 
 One-off utility to bulk-convert files between Markdown and HTML in a directory. Useful for regenerating per-post HTMLs after editing `template.html`.
