@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+  <head>
+    <title>🧮 4-bit ALU: RTL to Layout</title>
+    <link rel="stylesheet" href="../css/page.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/57a1b63118.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../js/resizeImage.js"></script>
+    <script src="../js/mathJaxConfig.js"></script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-container">
+        <div class="logo"><a href="../index.html">💻</a></div>
+        <ul class="page-list">
+          <li><a href="../about.html">About</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="../projects.html">Projects</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="page">
+      <h1>🧮 4-bit ALU: RTL to Layout</h1>
+      <hr class="line" />
+      <p>
+        I am learning digital design with an ASIC-first approach. Instead of
+        reading about the chip design flow, I wanted to take one small circuit
+        through all of it myself: writing the RTL, verifying it, synthesizing it
+        into real standard cells, checking its timing, and then placing and
+        routing it into a physical layout. A 4-bit ALU felt like the right size
+        for this. It is small enough that I can understand every gate, but it
+        still has an adder, so there is a real critical path to look at.
+      </p>
+      <p>
+        All the tools I used are open source. Yosys for synthesis, OpenROAD for
+        timing and physical design, and the Nangate45 library as the standard
+        cell library. I ran everything inside the OpenROAD-flow-scripts Docker
+        container on my Mac.
+      </p>
+      <h2>What the ALU does</h2>
+      <p>
+        The ALU takes two 4-bit inputs, <code>a</code> and <code>b</code>, and a
+        2-bit <code>op</code> that selects the operation. It produces a 4-bit
+        result <code>y</code> and a <code>carry_out</code>.
+      </p>
+      <ul>
+        <li>
+          <code>op = 00</code>: addition. <code>y</code> is the lower 4 bits of
+          <code>a + b</code>, and <code>carry_out</code> is the 5th bit.
+        </li>
+        <li><code>op = 01</code>: bitwise AND</li>
+        <li><code>op = 10</code>: bitwise OR</li>
+        <li><code>op = 11</code>: bitwise XOR</li>
+      </ul>
+      <p>For the logic operations, <code>carry_out</code> is always 0.</p>
+      <h2>Writing the RTL</h2>
+      <p>
+        I wrote the ALU in Verilog as a single <code>always @(*)</code> block
+        with a <code>case</code> statement on <code>op</code>. Two things
+        mattered here.
+      </p>
+      <p>
+        First, every output has to be assigned on every path. If I forget to
+        assign <code>y</code> in some branch, the synthesis tool assumes the old
+        value should be held, and it infers a latch. That is not what a
+        combinational circuit should have. So I gave all outputs a default value
+        at the top of the block.
+      </p>
+      <p>
+        Second, the carry. I used a 5-bit temporary sum, so the carry simply
+        becomes bit 4 of that sum. Writing <code>+</code> in Verilog does not
+        mean I get a ripple-carry adder in hardware. The synthesis tool decides
+        the actual adder structure.
+      </p>
+      <p>
+        Also, a <code>case</code> statement in combinational logic is just a
+        multiplexer. All four operations are computed in parallel, and
+        <code>op</code> selects which one goes to the output.
+      </p>
+      <p>Yosys confirmed there were no latches or flip-flops in the design.</p>
+      <h2>Testing it</h2>
+      <p>
+        Since the inputs are only 10 bits wide in total, I could test every
+        single combination. The testbench loops over all values of
+        <code>a</code>, <code>b</code> and <code>op</code>, which gives 1,024
+        cases. For each case, a task computes the expected result, and another
+        task compares it with the ALU output using <code>!==</code>, so that
+        <code>x</code> and <code>z</code> values also count as failures. On any
+        mismatch, the simulation stops with <code>$fatal</code>.
+      </p>
+      <p>
+        All 1,024 cases passed. But a passing testbench only means something if
+        it can actually fail. So I broke the RTL on purpose and changed XOR into
+        OR. The testbench caught it at <code>a = 0001, b = 0001, op = 11</code>,
+        after about 71 passing cases. Then I restored the correct RTL.
+      </p>
+      <h2>Synthesis: from Verilog to standard cells</h2>
+      <p>
+        Before mapping to a library, Yosys showed 11 high-level cells (things
+        like <code>$add</code>, <code>$and</code>, <code>$pmux</code>). A
+        generic gate-level synthesis turned that into 41 simple gates.
+      </p>
+      <p>Then I mapped it to the actual Nangate45 standard cells:</p>
+      <pre><code class="language-bash">LIB=/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+yosys -p &quot;
+  read_verilog alu4.v
+  hierarchy -check -top alu4
+  synth -top alu4 -noabc
+  dfflibmap -liberty $LIB
+  abc -liberty $LIB
+  clean
+  stat -liberty $LIB
+  write_verilog -noattr alu4_mapped.v
+&quot;
+</code></pre>
+      <p>
+        The result was 29 standard cells with a total cell area of 35.378 µm².
+        The cells were mostly compound gates like AOI and OAI, plus five XNORs.
+        The mapped netlist does not look like &quot;an adder, three logic blocks
+        and a mux&quot;, because ABC restructures the logic to fit the library
+        cells. Also, 35.378 µm² is just the sum of the cell footprints. It is
+        not the area of the chip.
+      </p>
+      <h2>Timing before layout</h2>
+      <p>
+        The ALU has no clock, so there is nothing to time against by default. To
+        run static timing analysis, I created a virtual clock with a 1 ns
+        period. Inputs are launched and outputs are captured with respect to
+        this clock. I also set a 50 ps input slew and a 0.01 pF load on the
+        outputs.
+      </p>
+      <p>
+        The worst path was from <code>b[1]</code> to <code>y[3]</code>, through
+        five gates:
+      </p>
+      <p>XNOR2 → OAI21 → AOI21 → XNOR2 → OAI221</p>
+      <p>
+        It took about 0.21 ns, which leaves +0.79 ns of slack. The other outputs
+        were faster: <code>y[2]</code> at 0.18 ns, <code>carry_out</code> at
+        0.16 ns, <code>y[1]</code> at 0.14 ns and <code>y[0]</code> at 0.12 ns.
+        This makes sense. The higher result bits depend on the carry coming up
+        from the lower bits.
+      </p>
+      <p>
+        One thing I want to be careful about: this does not tell me the maximum
+        frequency of a chip. The 1 ns clock is something I made up as a
+        reference. This is just a way to measure how long the combinational path
+        takes.
+      </p>
+      <h2>Floorplan</h2>
+      <p>
+        Now the physical part. A floorplan defines the die (the whole chip area)
+        and the core (the area where cells are placed). I asked for a 20×20 µm
+        die with the core from (2, 2) to (18, 18) µm. OpenROAD snapped the core
+        to the placement grid, so it actually became (2.09, 2.8) to (17.86,
+        16.8) µm, which is 220.78 µm².
+      </p>
+      <p>
+        The core is divided into rows of placement sites. Here there are 10
+        rows, each with 83 sites, and each site is 0.19 × 1.4 µm. Every
+        alternate row is flipped vertically (marked <code>FS</code>) so that
+        neighbouring rows can share their power rails.
+      </p>
+      <p>
+        With 35.378 µm² of cells in 220.78 µm² of core, the utilization is about
+        16%. That is low, but this is a tiny design.
+      </p>
+      <h2>Placement</h2>
+      <p>
+        Placement happens in two steps. Global placement spreads the cells out
+        to minimise wire length while keeping density under control. It ran for
+        369 iterations and ended with an estimated wire length (HPWL) of about
+        221.6 µm. Global placement allows cells to overlap, so detailed
+        placement then snaps every cell onto a legal site. It fixed 8 overlaps
+        across 4 cells, and the wire length went up to 249.9 µm.
+      </p>
+      <p>
+        The input and output pins were also placed on the edges of the die, all
+        15 of them.
+      </p>
+      <p>
+        When I looked at the layout in the GUI, the five gates of the critical
+        path were not sitting next to each other. The placer optimises all the
+        nets together, not just the critical path, and I did not turn on
+        timing-driven placement.
+      </p>
+      <p>
+        I also made a mistake with file names here. I kept saving the placed
+        design as <code>alu4_floorplan.odb</code>, so my routing script failed
+        when it looked for <code>alu4_placed.odb</code>. I changed the script to
+        load the right file. For the next project, I will use a separate file
+        name for each stage.
+      </p>
+      <h2>Routing</h2>
+      <p>
+        Routing also happens in two steps. Global routing does not draw any
+        wires. It divides the chip into a grid and decides which regions and
+        metal layers each net should pass through. These are saved as route
+        guides. I tried to view the guides in the GUI, but the command I tried
+        does not exist in my OpenROAD build, so I moved on.
+      </p>
+      <p>
+        Detailed routing then draws the real wires and vias inside those guides.
+        It finished with 0 violations. The total wire length was 287 µm, 153 µm
+        on metal2 and 134 µm on metal3, with 230 vias.
+      </p>
+      <p>
+        This is not a chip that can be manufactured. There is no power grid yet,
+        and 0 violations from the router is not the same as a full DRC and LVS
+        signoff.
+      </p>
+      <h2>Timing after routing</h2>
+      <p>
+        After routing, the wires have real resistance and capacitance. I
+        extracted these parasitics (37 nets, 180 resistor segments, 300 coupling
+        capacitors) and ran timing analysis again with the same constraints as
+        before.
+      </p>
+      <p>
+        The critical path was the same: <code>b[1]</code> to
+        <code>y[3]</code> at about 0.21 ns, with +0.79 ns of slack.
+      </p>
+      <p>
+        But this does not mean that routing had no effect. The report only shows
+        two decimal places, so any difference smaller than 10 ps simply does not
+        show up. I tried to increase the precision with
+        <code>sta::set_report_default_digits</code>, but that command does not
+        exist in my build.
+      </p>
+      <h2>What's next</h2>
+      <p>
+        I will rerun both the pre-route and the post-route timing with
+        <code>report_checks -digits 5</code>, using exactly the same
+        constraints, so that I can actually compare them. After that, I will
+        review the whole project and move on to sequential logic, where clocks,
+        flip-flops, setup and hold time come into the picture.
+      </p>
+    </div>
+    <div class="footer">
+      <div class="links">
+        <a
+          class="fa fa-youtube"
+          href="https://www.youtube.com/user/MrDivyanshu33"
+          alt="Youtube"
+        ></a
+        ><a
+          class="fa fa-github"
+          href="https://github.com/clinckzone"
+          alt="Github"
+        ></a
+        ><a
+          class="fa fa-linkedin"
+          href="https://www.linkedin.com/in/divyanshu-tiwari33/"
+          alt="Linkedin"
+        ></a
+        ><a class="fa fa-envelope" href="mailto:dtiwari@ar.iitr.ac.in?"></a>
+      </div>
+    </div>
+  </body>
+</html>
