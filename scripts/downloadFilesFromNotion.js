@@ -10,6 +10,7 @@ const { downloadImage } = require("./utils/downloadImagesToLocal.js");
 const { formatIsoDateToDayMonthYear } = require("./utils/formatIsoDate.js");
 const { exportMarkdownToHtml } = require("./utils/convertMarkdownToHtml.js");
 const { sortListingCards } = require("./utils/sortListingCards.js");
+const { addImagePlaceholders } = require("./utils/addImagePlaceholders.js");
 
 // Initialize Notion client
 const notion = new Client({
@@ -46,7 +47,7 @@ async function getPages(databaseId) {
   return pages;
 }
 
-function listPageOnWebsite(pageCategory, filename, metadata) {
+async function listPageOnWebsite(pageCategory, filename, metadata) {
   // Read the existing HTML
   const listingFilePath = path.resolve(__dirname, `../${pageCategory}.html`);
   const listingFileHtml = fs.readFileSync(listingFilePath, "utf-8");
@@ -63,7 +64,7 @@ function listPageOnWebsite(pageCategory, filename, metadata) {
   newListItem.setAttribute("href", `${pageCategory}/${filename}.html`);
 
   // Download cover file to local
-  downloadImage(metadata.coverUrl, `${filename}-cover.png`);
+  await downloadImage(metadata.coverUrl, `${filename}-cover.png`);
 
   // Set the inner HTML of our new anchor
   newListItem.innerHTML = `
@@ -81,6 +82,9 @@ function listPageOnWebsite(pageCategory, filename, metadata) {
 
   // Newest dated posts first, then undated posts in their existing order
   sortListingCards(document);
+
+  // Reserve space for each cover and show a placeholder while it loads
+  addImagePlaceholders(document, path.resolve(__dirname, ".."));
 
   // Serialize the updated DOM back to HTML
   const updatedHTML = dom.serialize();
@@ -212,7 +216,7 @@ async function addPageToWebsite(page) {
     };
 
     // Create a listing from the page metadata
-    listPageOnWebsite(pageCategory, completefileName, metadata);
+    await listPageOnWebsite(pageCategory, completefileName, metadata);
   } catch (error) {
     console.error(`❌ Error exporting page ${page.id}:`, error);
   }

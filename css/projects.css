@@ -199,6 +199,7 @@ li a:hover {
   position: relative;
   left: 0.5px;
   width: 100%;
+  height: auto;
   border-radius: 3px 3px 0 0;
 }
 .project-list a .card h3 {
@@ -242,5 +243,29 @@ li a:hover {
 @media screen and (max-width: 480px) {
   .projects {
     width: 100vw;
+  }
+}
+
+/* Loading placeholder for images (see js/imagePlaceholder.js) */
+.img-ph {
+  background: linear-gradient(90deg, #f2f2f2 25%, #e8e8e8 37%, #f2f2f2 63%);
+  background-size: 400% 100%;
+  animation: img-ph-shimmer 1.4s ease infinite;
+}
+.img-ph.loaded {
+  background: none;
+  animation: none;
+}
+@keyframes img-ph-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .img-ph {
+    animation: none;
   }
 }

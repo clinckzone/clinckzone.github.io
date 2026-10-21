@@ -13,9 +13,10 @@
     <script
       type="text/javascript"
       id="MathJax-script"
-      async
+      async=""
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
+    <script src="../js/imagePlaceholder.js" defer=""></script>
   </head>
   <body>
     <div class="header">
@@ -40,19 +41,18 @@
         autonomously generate data visualizations and explanations from
         real-world datasets. Running a challenge like this needs a way for
         participants to submit their agents and a way to actually run those
-        agents in a controlled environment. That&#39;s what this server does.
+        agents in a controlled environment. That's what this server does.
       </p>
       <p>
         The challenge had a few requirements that shaped the system.
         Participants needed to
         <strong>sign up, form teams, and submit code</strong> through a web
         interface. Each submission had to run in
-        <strong>isolation</strong> because participants&#39; code is arbitrary
-        and untrusted. The agents needed access to
-        <strong>LLM APIs</strong> like OpenAI and Azure OpenAI, with keys
-        provided by us so participants didn&#39;t have to bring their own. And
-        the results had to feed a <strong>public leaderboard</strong> showing
-        each team&#39;s best output.
+        <strong>isolation</strong> because participants' code is arbitrary and
+        untrusted. The agents needed access to <strong>LLM APIs</strong> like
+        OpenAI and Azure OpenAI, with keys provided by us so participants didn't
+        have to bring their own. And the results had to feed a
+        <strong>public leaderboard</strong> showing each team's best output.
       </p>
       <h2>Architecture</h2>
       <p>
@@ -101,17 +101,17 @@
       </p>
       <p>
         The worker picks up the task, builds a Docker image based on the
-        participant&#39;s <code>requirements.txt</code>, and runs the container.
+        participant's <code>requirements.txt</code>, and runs the container.
         Inside the container, the evaluation script dynamically loads the
-        participant&#39;s <code>agent.py</code>, instantiates their
+        participant's <code>agent.py</code>, instantiates their
         <code>Agent</code> class, calls <code>initialize()</code> and
         <code>process()</code>, and captures the output PDF. The container is
         short-lived and gets torn down once evaluation finishes.
       </p>
       <p>
-        This isolation matters because we have no idea what&#39;s in the
-        participant&#39;s code. The container runs as a non-privileged user with
-        a strict time and memory budget. If an agent crashes, hangs, or tries
+        This isolation matters because we have no idea what's in the
+        participant's code. The container runs as a non-privileged user with a
+        strict time and memory budget. If an agent crashes, hangs, or tries
         something malicious, the blast radius is one container.
       </p>
       <h2>Agent interface</h2>
@@ -120,11 +120,11 @@
       </p>
       <pre><code class="language-python">class Agent:
     def initialize(self):
-        &quot;&quot;&quot;Set up the agent. Called once before process.&quot;&quot;&quot;
+        """Set up the agent. Called once before process."""
         pass
 
     def process(self, input_data: dict) -&gt; dict:
-        &quot;&quot;&quot;Run the agent on a single input.&quot;&quot;&quot;
+        """Run the agent on a single input."""
         pass
 </code></pre>
       <p>
@@ -143,7 +143,7 @@
       <h2>Outcome</h2>
       <p>
         The platform went live for IEEE VIS 2025 and hosted the workshop
-        challenge submissions. Each team&#39;s agent output got picked up,
+        challenge submissions. Each team's agent output got picked up,
         evaluated, and surfaced on
         <a
           href="https://amplify.dvsuyr25l38y1.amplifyapp.com/archive/2025"

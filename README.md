@@ -108,6 +108,14 @@ Re-sorts the cards on `blog.html` and `projects.html`: dated posts first, newest
 npm run sort-listings
 ```
 
+### `scripts/addImagePlaceholders.js`
+
+Card covers and post images get their real `width`/`height`, `loading="lazy"`, and a grey shimmer placeholder (`.img-ph`, cleared by `js/imagePlaceholder.js` once the image loads), so the page doesn't jump as images arrive. The publishing script does this automatically for new pages. Run this to apply it to existing pages, e.g. after adding images by hand:
+
+```bash
+npm run add-image-placeholders
+```
+
 ### `scripts/bulkConvertFiles.js`
 
 One-off utility to bulk-convert files between Markdown and HTML in a directory. Useful for regenerating per-post HTMLs after editing `template.html`.

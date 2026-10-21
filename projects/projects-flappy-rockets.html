@@ -13,9 +13,10 @@
     <script
       type="text/javascript"
       id="MathJax-script"
-      async
+      async=""
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
+    <script src="../js/imagePlaceholder.js" defer=""></script>
   </head>
   <body>
     <div class="header">
@@ -50,17 +51,23 @@
           <img
             src="../images/projects-flappy-rockets-01.png"
             alt="Into Darkness by Heng Tang"
+            width="800"
+            height="430"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 744px; height: auto; aspect-ratio: 800 / 430"
           /><span>Into Darkness by Heng Tang</span>
         </li>
       </ul>
       <p>
-        It&#39;s a game full of space elements and physical interactions. The
-        best part of the game is that the player controls the onscreen spaceship
-        with a miniature physical spacecraft. Behaviours exhibited in the
-        game&#39;s virtual world accurately imitated the player&#39;s actions in
-        the real world. Such an interface where the user interacts with the
-        digital information through a physical environment is called a Tangible
-        User Interface.
+        It's a game full of space elements and physical interactions. The best
+        part of the game is that the player controls the onscreen spaceship with
+        a miniature physical spacecraft. Behaviours exhibited in the game's
+        virtual world accurately imitated the player's actions in the real
+        world. Such an interface where the user interacts with the digital
+        information through a physical environment is called a Tangible User
+        Interface.
       </p>
       <p>
         The seamless connection between the real and the virtual world is what
@@ -79,8 +86,8 @@
       </p>
       <h3>Implementation</h3>
       <p>
-        The game has been built using Processing 3. Further, I have used
-        <a href="https://box2d.org/" target="_blank">Box2D</a> as the game&#39;s
+        The game has been built using&nbsp;Processing 3. Further, I have used
+        <a href="https://box2d.org/" target="_blank">Box2D</a> as the game's
         physics engine which is mainly responsible for handling all the
         collision-related tasks. In case you are interested in knowing more
         about the inner implementation of the game, you can have a look at its
@@ -95,6 +102,12 @@
           <img
             src="../images/projects-flappy-rockets-02.png"
             alt="Circuit Implementation"
+            width="978"
+            height="652"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 600px; height: auto; aspect-ratio: 978 / 652"
           /><span>Circuit Implementation</span>
         </li>
       </ul>
@@ -114,7 +127,7 @@
               gyroscope;
               picture-in-picture;
             "
-            allowfullscreen
+            allowfullscreen=""
           ></iframe>
           <span>Interaction Demo</span>
         </li>
@@ -134,7 +147,7 @@
               gyroscope;
               picture-in-picture;
             "
-            allowfullscreen
+            allowfullscreen=""
           ></iframe>
           <span>Gameplay Demo</span>
         </li>

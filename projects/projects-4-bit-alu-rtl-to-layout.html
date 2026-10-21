@@ -13,9 +13,10 @@
     <script
       type="text/javascript"
       id="MathJax-script"
-      async
+      async=""
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
+    <script src="../js/imagePlaceholder.js" defer=""></script>
   </head>
   <body>
     <div class="header">
@@ -111,7 +112,7 @@
       </p>
       <p>Then I mapped it to the actual Nangate45 standard cells:</p>
       <pre><code class="language-bash">LIB=/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
-yosys -p &quot;
+yosys -p "
   read_verilog alu4.v
   hierarchy -check -top alu4
   synth -top alu4 -noabc
@@ -120,15 +121,15 @@ yosys -p &quot;
   clean
   stat -liberty $LIB
   write_verilog -noattr alu4_mapped.v
-&quot;
+"
 </code></pre>
       <p>
         The result was 29 standard cells with a total cell area of 35.378 µm².
         The cells were mostly compound gates like AOI and OAI, plus five XNORs.
-        The mapped netlist does not look like &quot;an adder, three logic blocks
-        and a mux&quot;, because ABC restructures the logic to fit the library
-        cells. Also, 35.378 µm² is just the sum of the cell footprints. It is
-        not the area of the chip.
+        The mapped netlist does not look like "an adder, three logic blocks and
+        a mux", because ABC restructures the logic to fit the library cells.
+        Also, 35.378 µm² is just the sum of the cell footprints. It is not the
+        area of the chip.
       </p>
       <h2>Timing before layout</h2>
       <p>

@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const { marked } = require("marked");
+const { JSDOM } = require("jsdom");
+const { addImagePlaceholders } = require("./addImagePlaceholders.js");
 
 // Helper functions
 function escapeQuotes(text) {
@@ -106,7 +108,12 @@ function exportMarkdownToHtml(markdownFilePath) {
       markdownFilePath,
       resolvedTemplateFilePath,
     );
-    fs.writeFileSync(htmlFilePath, htmlString, "utf-8");
+
+    // Reserve space for each image and show a placeholder while it loads
+    const dom = new JSDOM(htmlString);
+    addImagePlaceholders(dom.window.document, path.dirname(htmlFilePath));
+
+    fs.writeFileSync(htmlFilePath, dom.serialize(), "utf-8");
     console.log(
       `✅ Converted: ${path.basename(markdownFilePath)} -> ${path.basename(htmlFilePath)}`,
     );

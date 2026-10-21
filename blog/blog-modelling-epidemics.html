@@ -13,9 +13,10 @@
     <script
       type="text/javascript"
       id="MathJax-script"
-      async
+      async=""
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
+    <script src="../js/imagePlaceholder.js" defer=""></script>
   </head>
   <body>
     <div class="header">
@@ -66,12 +67,11 @@
       </p>
       <p>
         Diseases move in and out of a population in several ways. Some are like
-        measles, once contracted, they&#39;re never contracted again. Some are
-        like influenza, getting infected once doesn&#39;t confer long-lasting
-        immunity. Hence, different compartment models are used for modelling
-        different diseases since they require different compartments. To begin
-        with, we&#39;ll start with a simple model to model a disease like
-        measles.
+        measles, once contracted, they're never contracted again. Some are like
+        influenza, getting infected once doesn't confer long-lasting immunity.
+        Hence, different compartment models are used for modelling different
+        diseases since they require different compartments. To begin with, we'll
+        start with a simple model to model a disease like measles.
       </p>
       <h2>S-I-R Model</h2>
       <p>
@@ -155,14 +155,14 @@
       <p>then:</p>
       <p>\[\dfrac{dI}{dt}{(0)} &lt; 0,\]</p>
       <p>
-        i.e., the disease won&#39;t cause an epidemic outbreak regardless of the
+        i.e., the disease won't cause an epidemic outbreak regardless of the
         initial size of the susceptible population.
       </p>
       <h3>SIR model with vital dynamics</h3>
       <p>
         Our previous model was without the so-called vital dynamics i.e. it
-        didn&#39;t take births and deaths(due to other reasons) into account. In
-        this section, we&#39;ll tweak our model to account for the same.
+        didn't take births and deaths(due to other reasons) into account. In
+        this section, we'll tweak our model to account for the same.
       </p>
       <p>
         Let <strong>Λ</strong> be the rate at which new individuals are being
@@ -189,10 +189,10 @@
       </p>
       <h3>SIS model</h3>
       <p>
-        It&#39;s a model for diseases that don&#39;t lead to any long-lasting
-        immunity. You become susceptible again once you recover from the
-        disease. Infections like common cold and influenza are modelled this
-        way. It consists of two compartments, <strong>Susceptible</strong> and
+        It's a model for diseases that don't lead to any long-lasting immunity.
+        You become susceptible again once you recover from the disease.
+        Infections like common cold and influenza are modelled this way. It
+        consists of two compartments, <strong>Susceptible</strong> and
         <strong>Infected</strong>:
       </p>
       <p>\[S\leftrightarrow I,\]</p>
@@ -202,14 +202,14 @@
       <h3>MSIR model</h3>
       <p>
         Individuals born newly into the population have maternal antibodies
-        passed onto them from their mother&#39;s placenta and are immune for a
-        few months against certain diseases like measles. This is called passive
+        passed onto them from their mother's placenta and are immune for a few
+        months against certain diseases like measles. This is called passive
         immunity and we the denote its compartment by
         <strong>M</strong>(Maternally derived immunity):
       </p>
       <p>\[M\rightarrow S\rightarrow I \rightarrow R\]</p>
       <p>
-        Let&#39;s assume that the birth rate of the population is
+        Let's assume that the birth rate of the population is
         <strong>Λ</strong> and <strong>μ</strong> is the fraction of the total
         population that dies daily. If <strong>𝛿</strong> fraction of babies
         leave the immune compartment every day then we have the following model:
@@ -220,11 +220,11 @@
       <p>\[\dfrac{dR}{dt}=\gamma I -\mu R,\]</p>
       <h3>SEIR model</h3>
       <p>
-        Generally, for some infections, infected people don&#39;t become
-        infectious instantaneously. Instead, there&#39;s an incubation period
-        over which he become infectious. The individual is neither susceptible
-        nor infectious but is rather exposed to the infection, and we denote its
-        compartment by E:
+        Generally, for some infections, infected people don't become infectious
+        instantaneously. Instead, there's an incubation period over which he
+        become infectious. The individual is neither susceptible nor infectious
+        but is rather exposed to the infection, and we denote its compartment by
+        E:
       </p>
       <p>\[S \rightarrow E \rightarrow I \rightarrow R,\]</p>
       <p>

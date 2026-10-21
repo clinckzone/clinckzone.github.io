@@ -1,7 +1,9 @@
 <!doctype html>
 <html>
   <head>
-    <title>🌱 Implementing Debounce, Throttle and Curry in Javascript</title>
+    <title>
+      🌱&nbsp;Implementing Debounce, Throttle and Curry in Javascript
+    </title>
     <link rel="stylesheet" href="../css/page.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script
@@ -13,9 +15,10 @@
     <script
       type="text/javascript"
       id="MathJax-script"
-      async
+      async=""
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
+    <script src="../js/imagePlaceholder.js" defer=""></script>
   </head>
   <body>
     <div class="header">
@@ -29,7 +32,7 @@
       </div>
     </div>
     <div class="page">
-      <h1>🌱 Implementing Debounce, Throttle and Curry in Javascript</h1>
+      <h1>🌱&nbsp;Implementing Debounce, Throttle and Curry in Javascript</h1>
       <hr class="line" />
       <p>
         In this blog post I will be implementing the three most important
@@ -94,8 +97,8 @@
       </p>
       <p>
         <code>this</code> to the context where it was invoked when calling
-        <code>func(…args)</code>, but here <code>this</code> is bound to the
-        <code>global</code> context.
+        <code>func(…args)</code>, but here&nbsp;<code>this</code>&nbsp;is bound
+        to the <code>global</code> context.
       </p>
       <p>
         To further check if this is how things are, we can try calling the
@@ -107,7 +110,7 @@
 }
 
 const human = {
-	name: &quot;Divyanshu&quot;,
+	name: "Divyanshu",
 	speak: debounce(sayHello) // By default wait=0
 }
 
@@ -119,6 +122,12 @@ human.speak();
           <img
             src="../images/blog-implementing-debounce-throttle-and-curry-in-javascript-1.png"
             alt="Output from the code above"
+            width="631"
+            height="88"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 631px; height: auto; aspect-ratio: 631 / 88"
           /><span>Output from the code above</span>
         </li>
       </ul>
@@ -132,6 +141,12 @@ human.speak();
           <img
             src="../images/blog-implementing-debounce-throttle-and-curry-in-javascript-2.png"
             alt="Actual value of this"
+            width="628"
+            height="58"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 628px; height: auto; aspect-ratio: 628 / 58"
           /><span>Actual value of this</span>
         </li>
       </ul>
@@ -221,9 +236,7 @@ human.speak();
         <strong>active</strong> state is time dependent. Also, since there are
         only two states, we can use a boolean to model it.
       </p>
-      <p>
-        Here’s how we will go about <code>throttle</code>&#39;s implementation:
-      </p>
+      <p>Here’s how we will go about <code>throttle</code>'s implementation:</p>
       <ul>
         <li>
           Let’s assume that <code>throttle</code> takes in two arguments,
@@ -269,9 +282,10 @@ human.speak();
 </code></pre>
       <p>
         Note that since throttled functions are used just like the original
-        function we should preserve the value of <strong
+        function we should preserve the value of&nbsp;<strong
           ><code>this</code></strong
-        > when invoking the original callback functions. Therefore we cannot:
+        >&nbsp;when invoking the original callback functions. Therefore we
+        cannot:
       </p>
       <ul>
         <li>
@@ -397,13 +411,12 @@ const curriedSumABC = function(a) {
         There’s one huge mistake in this implementation though. Can you spot it?
         You can only use the curried function once after which it becomes
         useless. Why? The issue is with shared <code>args</code> array in the
-        lexical scope of the <code>curry</code> function. Once you&#39;ve
-        curried the function and provided enough arguments to invoke the
-        original function (<code>func</code>), the <code>args</code> array
-        retains those arguments. This means that any subsequent calls to the
-        curried function will continue to use the same accumulated arguments,
-        making the curried function effectively unusable after the first
-        complete invocation.
+        lexical scope of the <code>curry</code> function. Once you've curried
+        the function and provided enough arguments to invoke the original
+        function (<code>func</code>), the <code>args</code> array retains those
+        arguments. This means that any subsequent calls to the curried function
+        will continue to use the same accumulated arguments, making the curried
+        function effectively unusable after the first complete invocation.
       </p>
       <h3>Updated implementation</h3>
       <p>
