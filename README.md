@@ -87,50 +87,6 @@ The skip-if-already-listed check uses the listing card as the source of truth. T
 3. Optionally also delete the generated `.html`, `.md`, and `images/<category>-<slug>-*.png` files. Otherwise they'll be overwritten in place.
 4. Re-run `npm run pull-and-build`.
 
-## Scripts
-
-All scripts live in `scripts/` and run from the repo root.
-
-### `scripts/downloadFilesFromNotion.js`
-
-The main publishing pipeline. Reads from the Notion database (filtered to `Status = Complete`), generates `.md` + `.html` per page, downloads embedded images, and appends listing cards.
-
-```bash
-npm run pull-and-build
-# equivalent to: node scripts/downloadFilesFromNotion.js
-```
-
-### `scripts/sortListings.js`
-
-Re-sorts the cards on `blog.html` and `projects.html`: dated posts first, newest to oldest, then undated posts in their existing order. The publishing script applies the same sort whenever it adds a card, so this is only needed after editing a listing by hand.
-
-```bash
-npm run sort-listings
-```
-
-### `scripts/addImagePlaceholders.js`
-
-Card covers and post images get their real `width`/`height`, `loading="lazy"`, and a grey shimmer placeholder (`.img-ph`, cleared by `js/imagePlaceholder.js` once the image loads), so the page doesn't jump as images arrive. The publishing script does this automatically for new pages. Run this to apply it to existing pages, e.g. after adding images by hand:
-
-```bash
-npm run add-image-placeholders
-```
-
-### `scripts/bulkConvertFiles.js`
-
-One-off utility to bulk-convert files between Markdown and HTML in a directory. Useful for regenerating per-post HTMLs after editing `template.html`.
-
-```bash
-# Regenerate every .html from its .md sibling
-node scripts/bulkConvertFiles.js ../blog html
-node scripts/bulkConvertFiles.js ../projects html
-
-# Reverse direction: regenerate .md from .html (rarely used)
-node scripts/bulkConvertFiles.js ../blog md
-```
-
-The path arg is resolved relative to `scripts/` (because the script uses `path.resolve(__dirname, …)` internally), hence the `../`.
-
 ## Tooling
 
 A pre-commit hook runs on every `git commit`. It only processes staged files — fast even on a full repo.
