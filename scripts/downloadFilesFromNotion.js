@@ -3,7 +3,6 @@ require("dotenv").config();
 
 const fs = require("fs");
 const path = require("path");
-const { JSDOM } = require("jsdom");
 const { Client } = require("@notionhq/client");
 const { NotionToMarkdown } = require("notion-to-md");
 const { downloadImage } = require("./utils/downloadImagesToLocal.js");
@@ -12,6 +11,16 @@ const { exportMarkdownToHtml } = require("./utils/convertMarkdownToHtml.js");
 const { sortListingCards } = require("./utils/sortListingCards.js");
 const { addImagePlaceholders } = require("./utils/addImagePlaceholders.js");
 const { syncFeatured } = require("./utils/syncFeatured.js");
+const {
+  needsRebuild,
+  loadListing,
+  saveListing,
+  findExistingCard,
+  postPathFromCard,
+  imagesUsedBy,
+  removeUnusedImages,
+  removeFile,
+} = require("./utils/publishState.js");
 
 // Initialize Notion client
 const notion = new Client({
@@ -48,53 +57,6 @@ async function getPages(databaseId) {
   return pages;
 }
 
-async function listPageOnWebsite(pageCategory, filename, metadata) {
-  // Read the existing HTML
-  const listingFilePath = path.resolve(__dirname, `../${pageCategory}.html`);
-  const listingFileHtml = fs.readFileSync(listingFilePath, "utf-8");
-
-  // Parse the HTML with JSDOM
-  const dom = new JSDOM(listingFileHtml);
-  const document = dom.window.document;
-
-  // Find the .project-list element
-  const projectList = document.querySelector(".project-list");
-
-  // Create a new anchor element
-  const newListItem = document.createElement("a");
-  newListItem.setAttribute("href", `${pageCategory}/${filename}.html`);
-
-  // Download cover file to local
-  await downloadImage(metadata.coverUrl, `${filename}-cover.png`);
-
-  // Set the inner HTML of our new anchor
-  newListItem.innerHTML = `
-      <li class="card">
-        <img src="images/${filename}-cover.png" />
-        <h3>${metadata.title}</h3>
-        ${metadata.tags.map((tag) => `<span>${tag}</span>`).join("")}
-        <p>${metadata.subtitle}</p>
-        <div class="date">${metadata.date}</div>
-      </li>
-  `;
-
-  // Append it to the existing .project-list
-  projectList.appendChild(newListItem);
-
-  // Newest dated posts first, then undated posts in their existing order
-  sortListingCards(document);
-
-  // Reserve space for each cover and show a placeholder while it loads
-  addImagePlaceholders(document, path.resolve(__dirname, ".."));
-
-  // Serialize the updated DOM back to HTML
-  const updatedHTML = dom.serialize();
-
-  // Write the updated HTML to the original file
-  fs.writeFileSync(listingFilePath, updatedHTML, "utf-8");
-  console.log(`Added ${pageCategory} listing to ${pageCategory}.html`);
-}
-
 async function updateImageUrlsInMarkdown(mdString, filename) {
   // Find all image urls
   const imageRegex = /!\[.*?\]\((.*?)\)/g;
@@ -125,8 +87,45 @@ async function updateImageUrlsInMarkdown(mdString, filename) {
   return updatedMdString;
 }
 
-// Function to create a new page in the website
-async function addPageToWebsite(page) {
+// Builds the listing card for a post.
+function buildCard(document, pageId, postPath, filename, metadata) {
+  const card = document.createElement("a");
+  card.setAttribute("href", `${postPath}.html`);
+  card.setAttribute("data-notion-id", pageId);
+
+  const li = document.createElement("li");
+  li.className = "card";
+
+  const img = document.createElement("img");
+  img.setAttribute("src", `images/${filename}-cover.png`);
+  li.appendChild(img);
+
+  const h3 = document.createElement("h3");
+  h3.textContent = metadata.title;
+  li.appendChild(h3);
+
+  for (const tag of metadata.tags) {
+    const span = document.createElement("span");
+    span.textContent = tag;
+    li.appendChild(span);
+  }
+
+  const p = document.createElement("p");
+  p.textContent = metadata.subtitle;
+  li.appendChild(p);
+
+  const date = document.createElement("div");
+  date.className = "date";
+  date.textContent = metadata.date;
+  li.appendChild(date);
+
+  card.appendChild(li);
+  return card;
+}
+
+// Publishes a Notion page, or updates it if it was already published and has
+// been edited in Notion since its post was last committed.
+async function publishPage(page) {
   try {
     // Get the page title
     let title = "Untitled";
@@ -147,22 +146,49 @@ async function addPageToWebsite(page) {
       .replace(/ /g, "-")
       .toLowerCase();
     const completefileName = `${pageCategory}-${sanitizedFilename}`;
+    const postPath = `${pageCategory}/${completefileName}`;
 
-    // Skip if a card for this page already exists on the listing page.
-    // Remove the card manually to force a re-publish.
-    const listingFilePath = path.resolve(__dirname, `../${pageCategory}.html`);
-    if (fs.existsSync(listingFilePath)) {
-      const listingDom = new JSDOM(fs.readFileSync(listingFilePath, "utf-8"));
-      const existingCard = listingDom.window.document.querySelector(
-        `a[href="${pageCategory}/${completefileName}.html"]`,
-      );
-      if (existingCard) {
-        console.log(`⏭️  Skipping ${completefileName}: already listed`);
-        return;
-      }
+    // Cover can be either an external URL or a Notion-uploaded file (with a
+    // short-lived signed URL). Either is fine since we download immediately.
+    const coverUrl = page.cover?.external?.url ?? page.cover?.file?.url ?? null;
+    if (!coverUrl) {
+      console.error(`❌ No cover image set for ${completefileName}, skipping`);
+      return;
     }
 
-    console.log(`Exporting page: ${title}`);
+    // Is this page already on the site, possibly under an older title?
+    const existing = findExistingCard(page.id, pageCategory, completefileName);
+    let oldPostPath = null;
+    let oldImages = new Set();
+
+    if (existing) {
+      oldPostPath = postPathFromCard(existing.card);
+
+      // Cards published before page IDs were stored get theirs now
+      if (!existing.card.hasAttribute("data-notion-id")) {
+        existing.card.setAttribute("data-notion-id", page.id);
+        saveListing(existing.listing);
+      }
+
+      const moved = oldPostPath !== postPath;
+      if (!moved && !needsRebuild(page.last_edited_time, `${postPath}.md`)) {
+        console.log(`⏭️  Unchanged: ${completefileName}`);
+        return;
+      }
+
+      oldImages = imagesUsedBy(
+        `${oldPostPath}.md`,
+        existing.card.querySelector("img")?.getAttribute("src"),
+      );
+      console.log(
+        moved
+          ? `🔄 Updating ${oldPostPath} -> ${postPath}`
+          : `🔄 Updating ${postPath}`,
+      );
+    } else {
+      console.log(`🆕 Publishing ${postPath}`);
+    }
+
     const mdBlocks = await n2m.pageToMarkdown(page.id);
     const mdString = n2m.toMarkdownString(mdBlocks).parent;
 
@@ -199,25 +225,58 @@ async function addPageToWebsite(page) {
     const dateIso =
       page.properties.Date?.date?.start ?? page.properties.Created.created_time;
 
-    // Cover can be either an external URL or a Notion-uploaded file (with a
-    // short-lived signed URL). Either is fine since we download immediately.
-    const coverUrl = page.cover?.external?.url ?? page.cover?.file?.url ?? null;
-    if (!coverUrl) {
-      console.error(`❌ No cover image set for ${completefileName}, skipping`);
-      return;
-    }
-
     // Page metadata
     const metadata = {
-      coverUrl,
       title,
       subtitle,
       tags: page.properties.Tags.multi_select.map((tag) => tag.name),
       date: formatIsoDateToDayMonthYear(dateIso),
     };
 
-    // Create a listing from the page metadata
-    await listPageOnWebsite(pageCategory, completefileName, metadata);
+    // Download cover file to local
+    await downloadImage(coverUrl, `${completefileName}-cover.png`);
+
+    // Put the card on the listing: replace the old card in place, or move it
+    // to the right listing if the category changed.
+    const sameListing = existing?.listing.category === pageCategory;
+    const listing = sameListing ? existing.listing : loadListing(pageCategory);
+    const newCard = buildCard(
+      listing.document,
+      page.id,
+      postPath,
+      completefileName,
+      metadata,
+    );
+
+    if (sameListing) {
+      existing.card.replaceWith(newCard);
+    } else {
+      if (existing) {
+        existing.card.remove();
+        saveListing(existing.listing);
+      }
+      listing.document.querySelector(".project-list").appendChild(newCard);
+    }
+
+    // Newest dated posts first, then undated posts in their existing order
+    sortListingCards(listing.document);
+
+    // Reserve space for each cover and show a placeholder while it loads
+    addImagePlaceholders(listing.document, path.resolve(__dirname, ".."));
+
+    saveListing(listing);
+    console.log(`✅ Listed on ${pageCategory}.html`);
+
+    // Clean up after a rename or category change, and drop images the
+    // post no longer uses
+    if (oldPostPath && oldPostPath !== postPath) {
+      removeFile(`${oldPostPath}.md`);
+      removeFile(`${oldPostPath}.html`);
+    }
+    removeUnusedImages(
+      oldImages,
+      imagesUsedBy(`${postPath}.md`, `images/${completefileName}-cover.png`),
+    );
   } catch (error) {
     console.error(`❌ Error exporting page ${page.id}:`, error);
   }
@@ -238,7 +297,7 @@ async function main() {
 
   for (const page of pages) {
     if (page.properties.Status?.select?.name === "Complete") {
-      await addPageToWebsite(page);
+      await publishPage(page);
     }
   }
 

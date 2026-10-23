@@ -73,19 +73,23 @@ Categories `blog` and `projects` are the only ones with existing listing pages (
    npm run pull-and-build
    ```
 
-4. Review changes with `git status` / `git diff` — you should see new files in the target category folder, new images in `images/`, and an appended card on the listing HTML.
+4. Review changes with `git status` / `git diff` — you should see new files in the target category folder, new images in `images/`, and a new card on the listing HTML.
 5. Commit and push. GitHub Pages rebuilds on push.
 
-The script is **idempotent** — re-running it skips any page whose card is already on the listing. Safe to rerun whenever Notion has new content.
+The `Publish from Notion` GitHub Actions workflow does steps 3–5 for you every day, and on demand from the Actions tab.
 
-## Re-publishing an existing post
+## Updating a published post
 
-The skip-if-already-listed check uses the listing card as the source of truth. To force a re-publish (e.g., to pick up edits you made in Notion):
+Edit the page in Notion. On the next run, the script compares the page's Notion last-edited time with the time its `.md` file was last committed, and rebuilds the post if the Notion page is newer. Unchanged posts are skipped, so their files aren't touched.
 
-1. Open the relevant listing page (`blog.html` or `projects.html`).
-2. Delete the `<a>...</a>` card for the post you want to re-publish.
-3. Optionally also delete the generated `.html`, `.md`, and `images/<category>-<slug>-*.png` files. Otherwise they'll be overwritten in place.
-4. Re-run `npm run pull-and-build`.
+Each card stores its Notion page ID (`data-notion-id`), so the script can find a post even after it changes:
+
+- **Renamed** — the post moves to its new URL, its card is updated in place, and the old `.md`, `.html` and images are deleted.
+- **Category changed** — the card moves to the other listing and the old files are deleted.
+
+This needs the full git history: in a shallow clone every file looks like it was committed in the latest commit. The workflow checks out with `fetch-depth: 0`; locally, run it from a normal (non-shallow) clone.
+
+To force a rebuild of a post without editing it in Notion, delete its `.md` file and re-run.
 
 ## Tooling
 
