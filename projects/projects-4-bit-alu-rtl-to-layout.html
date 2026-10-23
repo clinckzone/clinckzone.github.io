@@ -42,9 +42,10 @@
         still has an adder, so there is a real critical path to look at.
       </p>
       <p>
-        All the tools I used are open source. Yosys for synthesis, OpenROAD for
-        timing and physical design, and the Nangate45 library as the standard
-        cell library.
+        Obviously I am not alone in this. I used ChatGPT to take me through this
+        entire workflow. All the tools I used are open source. Yosys for
+        synthesis, OpenROAD for timing and physical design, and the Nangate45
+        library as the standard cell library.
       </p>
       <h2>What the ALU does</h2>
       <p>
@@ -65,37 +66,23 @@
       <h2>Writing the RTL</h2>
       <p>
         I wrote the ALU in Verilog as a single <code>always @(*)</code> block
-        with a <code>case</code> statement on <code>op</code>. Two things
-        mattered here.
+        with a <code>case</code> statement on <code>op</code>. Every output has
+        to be assigned on every path. If I forget to assign <code>y</code> in
+        some branch, the synthesis tool assumes the old value should be held,
+        and it infers a latch. That is not what a combinational circuit should
+        have. So I gave all outputs a default value at the top of the block.
+        Later, Yosys confirmed there were no latches or flip-flops in the
+        design.
       </p>
-      <p>
-        First, every output has to be assigned on every path. If I forget to
-        assign <code>y</code> in some branch, the synthesis tool assumes the old
-        value should be held, and it infers a latch. That is not what a
-        combinational circuit should have. So I gave all outputs a default value
-        at the top of the block.
-      </p>
-      <p>
-        Second, the carry. I used a 5-bit temporary sum, so the carry simply
-        becomes bit 4 of that sum. Writing <code>+</code> in Verilog does not
-        mean I get a ripple-carry adder in hardware. The synthesis tool decides
-        the actual adder structure.
-      </p>
-      <p>
-        Also, a <code>case</code> statement in combinational logic is just a
-        multiplexer. All four operations are computed in parallel, and
-        <code>op</code> selects which one goes to the output.
-      </p>
-      <p>Yosys confirmed there were no latches or flip-flops in the design.</p>
       <h2>Testing it</h2>
       <p>
-        Since the inputs are only 10 bits wide in total, I could test every
-        single combination. The testbench loops over all values of
-        <code>a</code>, <code>b</code> and <code>op</code>, which gives 1,024
-        cases. For each case, a task computes the expected result, and another
-        task compares it with the ALU output using <code>!==</code>, so that
-        <code>x</code> and <code>z</code> values also count as failures. On any
-        mismatch, the simulation stops with <code>$fatal</code>.
+        Since the inputs are only 10 bits (2, 4 bit numbers and 2 bit input)
+        wide in total, I could test every single combination. The testbench
+        loops over all values of <code>a</code>, <code>b</code> and
+        <code>op</code>, which gives 1,024 cases. For each case, a task computes
+        the expected result, and another task compares it with the ALU output
+        using <code>!==</code>. On any mismatch, the simulation stops with
+        <code>$fatal</code>.
       </p>
       <p>
         All 1,024 cases passed. But a passing testbench only means something if
@@ -103,11 +90,12 @@
         OR. The testbench caught it at <code>a = 0001, b = 0001, op = 11</code>,
         after about 71 passing cases. Then I restored the correct RTL.
       </p>
-      <h2>Synthesis: from Verilog to standard cells</h2>
+      <h2>Synthesis</h2>
       <p>
-        Before mapping to a library, Yosys showed 11 high-level cells (things
-        like <code>$add</code>, <code>$and</code>, <code>$pmux</code>). A
-        generic gate-level synthesis turned that into 41 simple gates.
+        Before mapping to a standard cell library, Yosys showed 11 high-level
+        cells (things like <code>$add</code>, <code>$and</code>,
+        <code>$pmux</code>). A generic gate-level synthesis turned that into 41
+        simple gates.
       </p>
       <p>Then I mapped it to the actual Nangate45 standard cells:</p>
       <pre><code class="language-bash">LIB=/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
@@ -143,6 +131,20 @@ yosys -p "
         five gates:
       </p>
       <p>XNOR2 → OAI21 → AOI21 → XNOR2 → OAI221</p>
+      <ul class="single">
+        <li class="image">
+          <img
+            src="../images/projects-4-bit-alu-rtl-to-layout-1.png"
+            alt="image.png"
+            width="1200"
+            height="993"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 483px; height: auto; aspect-ratio: 1200 / 993"
+          /><span>image.png</span>
+        </li>
+      </ul>
       <p>
         It took about 0.21 ns, which leaves +0.79 ns of slack. The other outputs
         were faster: <code>y[2]</code> at 0.18 ns, <code>carry_out</code> at
@@ -170,18 +172,35 @@ yosys -p "
         alternate row is flipped vertically (marked <code>FS</code>) so that
         neighbouring rows can share their power rails.
       </p>
+      <ul class="single">
+        <li class="image">
+          <img
+            src="../images/projects-4-bit-alu-rtl-to-layout-2.png"
+            alt="The green asymmetric shape demonstrates the actual vertical flip. The rail positions swap as a consequence of that reflection."
+            width="340"
+            height="160"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 340px; height: auto; aspect-ratio: 340 / 160"
+          /><span
+            >The green asymmetric shape demonstrates the actual vertical flip.
+            The rail positions swap as a consequence of that reflection.</span
+          >
+        </li>
+      </ul>
       <p>
         With 35.378 µm² of cells in 220.78 µm² of core, the utilization is about
-        16%. That is low, but this is a tiny design.
+        16%. That is low, but this is a tiny design anyways.
       </p>
       <h2>Placement</h2>
       <p>
         Placement happens in two steps. Global placement spreads the cells out
         to minimise wire length while keeping density under control. It ran for
-        369 iterations and ended with an estimated wire length (HPWL) of about
-        221.6 µm. Global placement allows cells to overlap, so detailed
-        placement then snaps every cell onto a legal site. It fixed 8 overlaps
-        across 4 cells, and the wire length went up to 249.9 µm.
+        369 iterations and ended with an estimated wire length of about 221.6
+        µm. Global placement allows cells to overlap, so detailed placement then
+        snaps every cell onto a legal site. It fixed 8 overlaps across 4 cells,
+        and the wire length went up to 249.9 µm.
       </p>
       <p>
         The input and output pins were also placed on the edges of the die, all
@@ -193,31 +212,48 @@ yosys -p "
         nets together, not just the critical path, and I did not turn on
         timing-driven placement.
       </p>
-      <p>
-        I also made a mistake with file names here. I kept saving the placed
-        design as <code>alu4_floorplan.odb</code>, so my routing script failed
-        when it looked for <code>alu4_placed.odb</code>. I changed the script to
-        load the right file. For the next project, I will use a separate file
-        name for each stage.
-      </p>
+      <ul class="single">
+        <li class="image">
+          <img
+            src="../images/projects-4-bit-alu-rtl-to-layout-3.png"
+            alt="image.png"
+            width="2047"
+            height="1214"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 674px; height: auto; aspect-ratio: 2047 / 1214"
+          /><span>image.png</span>
+        </li>
+      </ul>
       <h2>Routing</h2>
       <p>
         Routing also happens in two steps. Global routing does not draw any
         wires. It divides the chip into a grid and decides which regions and
         metal layers each net should pass through. These are saved as route
-        guides. I tried to view the guides in the GUI, but the command I tried
-        does not exist in my OpenROAD build, so I moved on.
-      </p>
-      <p>
-        Detailed routing then draws the real wires and vias inside those guides.
-        It finished with 0 violations. The total wire length was 287 µm, 153 µm
-        on metal2 and 134 µm on metal3, with 230 vias.
+        guides. Detailed routing then draws the real wires and vias inside those
+        guides. It finished with 0 violations. The total wire length was 287 µm,
+        153 µm on metal2 and 134 µm on metal3, with 230 vias.
       </p>
       <p>
         At this stage there was no power grid yet. Also, 0 violations from the
         router is not the same as a full DRC and LVS signoff (more on this
         later).
       </p>
+      <ul class="single">
+        <li class="image">
+          <img
+            src="../images/projects-4-bit-alu-rtl-to-layout-4.png"
+            alt="image.png"
+            width="2936"
+            height="1674"
+            loading="lazy"
+            decoding="async"
+            class="img-ph"
+            style="width: 702px; height: auto; aspect-ratio: 2936 / 1674"
+          /><span>image.png</span>
+        </li>
+      </ul>
       <h2>Timing after routing</h2>
       <p>
         After routing, the wires have real resistance and capacitance. I
@@ -226,25 +262,8 @@ yosys -p "
         with the same constraints as before.
       </p>
       <p>
-        At first, the critical path looked the same: <code>b[1]</code> to
-        <code>y[3]</code> at about 0.21 ns, with +0.79 ns of slack. The report
-        only shows two decimal places, so any difference smaller than 10 ps
-        simply does not show up. I tried to increase the precision with
-        <code>sta::set_report_default_digits</code>, but that command does not
-        exist in my build. <code>report_checks -digits 5</code> works instead.
-      </p>
-      <p>
-        But there was a bigger problem with this number. The annotation report
-        said <code>Found 39 unannotated drivers</code>. In other words, every
-        net was still being timed without its parasitics. Writing the SPEF file
-        does not load it back into the timing engine. I had to read it in
-        explicitly with <code>read_spef</code>, and after that the report said 0
-        unannotated drivers.
-      </p>
-      <p>
         With the parasitics actually loaded, the same path went from 211.24 ps
-        to 224.75 ps. That is 13.51 ps, or about 6.4% slower, with +775.25 ps of
-        slack left.
+        to 224.75 ps. That is 13.51 ps, or about 6.4% slower.
       </p>
       <p>
         The interesting part is where this extra delay shows up. The delay of
@@ -262,24 +281,14 @@ yosys -p "
         thin horizontal rails on metal1 that run along every row (this is why
         alternate rows are flipped, so that neighbouring rows share a rail),
         vertical straps on metal4, and wider straps on metal7, with vias
-        connecting the layers.
-      </p>
-      <p>
-        When I checked the grid with <code>check_power_grid</code>, it failed
-        with <code>PSM-0025 VDD does not contain any terminals</code>. A
-        terminal is the point where power enters the design from outside, and I
-        had not defined any. With <code>-dont_require_terminals</code>, the tool
-        only checks that all the power shapes are connected to each other. Both
-        VDD and VSS passed this. So the grid is connected internally, but I have
-        not defined where power comes in, and I have not checked IR drop or
-        electromigration.
+        connecting the layers. So the grid is connected internally, but I have
+        not defined where power comes in (terminals).
       </p>
       <p>
         The power straps take up space on the metal layers, so I had to route
         the signals again. This time the detailed router needed a few
-        iterations. It started with 3 violations (shorts and spacing errors on
-        metal2), then 3, then 1, and finally 0. The signal wiring grew slightly,
-        from 287 µm to 289 µm, and from 230 to 236 vias.
+        iterations. The signal wiring grew slightly, from 287 µm to 289 µm, and
+        from 230 to 236 vias.
       </p>
       <p>
         The critical path went from 224.75 ps to 226.11 ps, which is 1.36 ps
@@ -298,11 +307,6 @@ yosys -p "
         KLayout's <code>def2stream.py</code> to merge my routed DEF with the
         library cells into <code>alu4.gds</code>.
       </p>
-      <p>
-        The result has a top cell called <code>alu4</code>, a 20 × 20 µm
-        bounding box, and 379 child instances. These are not 379 logic gates, so
-        this number should not be compared with the 29 cells from synthesis.
-      </p>
       <h2>Checking the layout</h2>
       <p>
         This is where the "0 violations" from the router got tested. I ran the
@@ -319,22 +323,6 @@ yosys -p "
         about the width of a well, not about the spacing between an N-well and a
         P-well.
       </p>
-      <p>
-        Since two of the findings were inside <code>OR2_X1</code>, I checked
-        that cell on its own. Running the library GDS directly through the deck
-        failed at first because it has many top-level cells, so I made a local
-        copy of the deck that only selects <code>OR2_X1</code>. On its own, the
-        cell had 0 violations. So the cell is fine by itself, and the problem
-        only appears once it is placed in my layout. I don't know the reason
-        yet. It could be how cells interact at their boundaries, or how the deck
-        checks the hierarchy. I did not switch the rule off to make the report
-        clean.
-      </p>
-      <p>
-        I also could not run LVS, which checks that the layout matches the
-        netlist. The Nangate45 platform I have does not include an LVS rule
-        deck, and I don't have Netgen or Magic installed.
-      </p>
       <h2>Where I stopped</h2>
       <p>
         At this point I decided to close the project. The ALU is verified,
@@ -347,8 +335,8 @@ yosys -p "
       </p>
       <p>
         I could keep debugging the WELL.4 violations, but that is a physical
-        verification problem, and I think it is more important for me right now
-        to get the basics of sequential logic right.
+        verification problem. The objective of this exercise was achieved which
+        was to get a good high-level overview of the ASIC Design flow.
       </p>
       <h2>What's next</h2>
       <p>
@@ -357,7 +345,7 @@ yosys -p "
         flip-flop and a register, with a testbench that checks the output cycle
         by cycle, and then build a counter and a small state machine. I will
         come back to the DRC violations and LVS when I get to physical
-        verification properly.
+        verification properly in the near future.
       </p>
     </div>
     <div class="commentbox">
