@@ -114,7 +114,7 @@ The input and output pins were also placed on the edges of the die, all 15 of th
 When I looked at the layout in the GUI, the five gates of the critical path were not sitting next to each other. The placer optimises all the nets together, not just the critical path, and I did not turn on timing-driven placement.
 
 
-![image.png](../images/projects-4-bit-alu-rtl-to-layout-3.png)
+![After cell placement](../images/projects-4-bit-alu-rtl-to-layout-3.png)
 
 
 ## Routing
@@ -126,7 +126,7 @@ Routing also happens in two steps. Global routing does not draw any wires. It di
 At this stage there was no power grid yet. Also, 0 violations from the router is not the same as a full DRC and LVS signoff (more on this later).
 
 
-![image.png](../images/projects-4-bit-alu-rtl-to-layout-4.png)
+![After detailed routing](../images/projects-4-bit-alu-rtl-to-layout-4.png)
 
 
 ## Timing after routing
